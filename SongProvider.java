@@ -25,8 +25,15 @@ public class SongProvider
     // The next two functions give an iterator-like interface
     // and allow the engine to easily cycle over all applicable songs
     public String getCurrentSongFile() {
-	return m_currentSongFile;
+	String albumName = null;
+	if (m_currentAlbum != null) {
+	    albumName = m_currentAlbum.name;
+	}
+	return m_storage.getSongPath(m_currentBand.name,
+				     albumName,
+				     m_currentSong);
     }
+
     public void advanceSong() {
 	if (m_isRandom) {
 	    advanceToRandomSong();
@@ -81,7 +88,7 @@ public class SongProvider
     private boolean m_isRandom = false;
     private String m_bandClamp = "";
     private String m_albumClamp = "";
-    private String m_currentSongFile;
+    private String m_currentSong;
     private int m_currentSongNumber;
     
     private BandInfo m_currentBand;
@@ -251,7 +258,7 @@ public class SongProvider
 
 	Vector<String> albumSongs = getAlbumSongs(bi.name, ai.name);	
 	m_currentSongNumber = songNum;
-	m_currentSongFile = albumSongs.elementAt(songNum - ai.firstSong);	
+	m_currentSong = albumSongs.elementAt(songNum - ai.firstSong);	
 	m_currentAlbum = ai;
 	m_currentBand = bi;
     }
@@ -277,7 +284,7 @@ public class SongProvider
 	assert index < looseSongs.size();
 	m_currentSongNumber = songNum;
 	//	System.out.println("Looking for " + ((Integer)songNum).toString() + " in band beginning with " + ((Integer)bi.firstSong).toString());
-	m_currentSongFile = looseSongs.elementAt(index);
+	m_currentSong = looseSongs.elementAt(index);
 	m_currentBand = bi;
 	m_currentAlbum = null;
 
