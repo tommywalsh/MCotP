@@ -2,21 +2,38 @@ import java.lang.Process;
 import java.lang.Runtime;
 import java.io.IOException;
 import java.lang.Thread;
+import java.util.HashSet;
+import java.util.Iterator;
 
-public class SoxPlayer implements Player
+public class SoxPlayer implements Player, ExecThread.FinishedListener
 {
     private final String c_playCommand = "play";
     private ExecThread m_thread;
     private String m_songFile;
+    private HashSet<Player.SongFinishedListener> m_listeners = new HashSet<Player.SongFinishedListener>();
 
     SoxPlayer() {
+    }
+
+    public void onFinished() {
+	for (Iterator<Player.SongFinishedListener> iter = m_listeners.iterator(); iter.hasNext();  ) {
+	    iter.next().onSongFinished();
+	}	
+    }
+
+    public void addListener(Player.SongFinishedListener l) {
+	m_listeners.add(l);
+    }
+
+    public void removeListener(Player.SongFinishedListener l) {
+	m_listeners.remove(l);
     }
 
     public void play() {
 	String[] ca = new String[2];
 	ca[0] = c_playCommand;
 	ca[1] = m_songFile;
-	m_thread = new ExecThread(ca);
+	m_thread = new ExecThread(ca, this);
 	m_thread.start();
     }
 

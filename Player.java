@@ -1,8 +1,14 @@
 
 public interface Player
 {
-    //    public void addListener(PlayerChangeListener l);
-    //    public void removeListener(PlayerChangeListener l);
+
+    public interface SongFinishedListener
+    {
+	public void onSongFinished();
+    }
+
+    public void addListener(SongFinishedListener l);
+    public void removeListener(SongFinishedListener l);
     public void play();
     public void pause();
     public void restartSong();
