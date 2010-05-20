@@ -12,8 +12,6 @@ import java.util.Random;
 
 // TO-DO List
 //
-// * Actually provide a fully-scoped song file that can be 
-//        retrieved from storage
 // * Serialize our cache of songs to speed loading
 // * Implement clamping
 // * Filter out non-music
@@ -197,9 +195,6 @@ public class SongProvider
 	}
 	info.numSongs = albumSongCount + looseSongs.size();
 	
-	//	System.out.println("Adding " + info.name + " from " +
-	//			   ((Integer)info.firstSong).toString() +
-	//			   " to " + ((Integer)info.lastSong()).toString());
 	return info;
     }
     ////////////////////////////////////////////////////////////
@@ -232,7 +227,6 @@ public class SongProvider
 	    m_allBands.add(info);
 	    m_indexToBand.put((Integer)(info.firstSong), i);
 	    ++i;
-	    //	    System.out.println("Got band " + info.name + " with " + ((Integer)info.numSongs).toString() + " songs.");
 	}
 	m_numSongs = nextSongNum;
 	advanceToSpecificBandSong(m_allBands.elementAt(0), 0);
@@ -253,8 +247,6 @@ public class SongProvider
 	assert (ai != null);
 	assert ( (songNum >= ai.firstSong) &&
 		 (songNum <= ai.lastSong()));
-
-	//	System.out.println("Advancing to song " + ((Integer)songNum).toString());
 
 	Vector<String> albumSongs = getAlbumSongs(bi.name, ai.name);	
 	m_currentSongNumber = songNum;
@@ -283,7 +275,6 @@ public class SongProvider
 	Vector<String> looseSongs = getLooseSongs(bi.name);
 	assert index < looseSongs.size();
 	m_currentSongNumber = songNum;
-	//	System.out.println("Looking for " + ((Integer)songNum).toString() + " in band beginning with " + ((Integer)bi.firstSong).toString());
 	m_currentSong = looseSongs.elementAt(index);
 	m_currentBand = bi;
 	m_currentAlbum = null;
@@ -379,6 +370,7 @@ public class SongProvider
 
 
 
+    /*
     // Temporary: for testing purposes
     public static void main(String[] args)
     {
@@ -393,5 +385,6 @@ public class SongProvider
 	    provider.toggleRandom();
 	}
     }
+    */
 }
 
