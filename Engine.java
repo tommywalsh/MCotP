@@ -73,21 +73,25 @@ public class Engine
     // For testing
     public static void main (String[] args)
     {
-	SongProvider sp = new SongProvider(new PosixStorageProvider("/media/mcotp"));
-	sp.constructLibrary();
-
-	Engine engine = new Engine(sp, new SoxPlayer());
-	try {
-
-	    engine.toggleRandom();
-	    engine.play();
-	    for (int i = 1; i < 10; ++i) {
-		Thread.sleep(4000);
-		engine.nextSong();
+	if (args.length != 1) {
+	    System.out.println("Usage: java Engine /path/to/library");
+	} else {
+	    SongProvider sp = new SongProvider(new PosixStorageProvider(args[0]));
+	    sp.constructLibrary();
+	    
+	    Engine engine = new Engine(sp, new SoxPlayer());
+	    try {
+		
+		engine.toggleRandom();
+		engine.play();
+		for (int i = 1; i < 10; ++i) {
+		    Thread.sleep(4000);
+		    engine.nextSong();
+		}
+		engine.pause();
+		
+	    } catch (InterruptedException e) {
 	    }
-	    engine.pause();
-
-	} catch (InterruptedException e) {
 	}
     }
 
