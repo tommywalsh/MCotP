@@ -13,6 +13,7 @@ public class Engine
 	m_isPlaying = false;
 	m_currentSongFile = m_provider.getCurrentSongFile();
 	m_player.setSongFile(m_currentSongFile);
+        m_player.addListener(new SFListener());
     }
 
     public void toggleRandom() {
@@ -54,6 +55,13 @@ public class Engine
 	} else {
 	    m_player.play();
 	}
+    }
+
+
+    private class SFListener implements Player.SongFinishedListener {
+        public void onSongFinished() {
+            nextSong();
+        }
     }
 
     public void restartSong() {
