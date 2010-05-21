@@ -1,4 +1,5 @@
-
+import java.util.HashSet;
+import java.util.Iterator;
 
 public class Engine
 {
@@ -6,14 +7,39 @@ public class Engine
     private Player m_player;
     private String m_currentSongFile;
     private boolean m_isPlaying;
+    private HashSet<UpdateListener> m_listeners;
+
+    public interface UpdateListener {
+	public void onSongChanged(String song);
+    }
 
     Engine(SongProvider provider, Player player) {
+	m_listeners = new HashSet<UpdateListener>();
 	m_provider = provider;
 	m_player = player;
 	m_isPlaying = false;
 	m_currentSongFile = m_provider.getCurrentSongFile();
 	m_player.setSongFile(m_currentSongFile);
-        m_player.addListener(new SFListener());
+	m_player.addListener(new Player.SongFinishedListener() {
+		public void onSongFinished() {
+		    nextSong();
+		}
+	    });
+    }
+    
+    public void addListener(UpdateListener l) {
+	m_listeners.add(l);
+    }
+
+    public String getSongFile() {
+	return m_currentSongFile;
+    }
+
+    private void notifySongChanged(String newSong) {
+	for (Iterator<UpdateListener> iter = m_listeners.iterator(); iter.hasNext();  ) {
+	    iter.next().onSongChanged(newSong);
+	}	
+
     }
 
     public void toggleRandom() {
@@ -51,18 +77,12 @@ public class Engine
 
     public void togglePlayPause() {
 	if (m_isPlaying) {
-	    m_player.pause();
+	    pause();
 	} else {
-	    m_player.play();
+	    play();
 	}
     }
 
-
-    private class SFListener implements Player.SongFinishedListener {
-        public void onSongFinished() {
-            nextSong();
-        }
-    }
 
     public void restartSong() {
 	m_player.restartSong();
@@ -76,6 +96,7 @@ public class Engine
 	if (m_isPlaying) {
 	    m_player.play();
 	}
+	notifySongChanged(songFile);
     }
 
     // For testing
