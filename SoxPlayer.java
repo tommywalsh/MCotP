@@ -30,9 +30,10 @@ public class SoxPlayer implements Player, ExecThread.FinishedListener
     }
 
     public void play() {
-	String[] ca = new String[2];
+	String[] ca = new String[3];
 	ca[0] = c_playCommand;
-	ca[1] = m_songFile;
+	ca[1] = "-q";
+	ca[2] = m_songFile;
 	m_thread = new ExecThread(ca, this);
 	m_thread.start();
     }
