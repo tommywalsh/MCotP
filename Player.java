@@ -12,5 +12,5 @@ public interface Player
     public void play();
     public void pause();
     public void restartSong();
-    public void setSongFile(String songFile);
+    public void setSong(Song song);
 }

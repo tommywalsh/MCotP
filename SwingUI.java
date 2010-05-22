@@ -20,6 +20,9 @@ public class SwingUI extends JPanel implements ActionListener
     JButton m_bandButton;
     JButton m_bandLockButton;
 
+    JButton m_albumButton;
+    JButton m_albumLockButton;
+
     JLabel  m_songLabel;
 
     JButton m_restartButton;
@@ -56,6 +59,10 @@ public class SwingUI extends JPanel implements ActionListener
 	m_bandLockButton = new JButton("Lock");
 	addRow(m_bandButton, m_bandLockButton, null);
 
+	m_albumButton = new JButton("Album");
+	m_albumLockButton = new JButton("Lock");
+	addRow(m_albumButton, m_albumLockButton, null);
+
 	m_songLabel = new JLabel("Song");
 	add(m_songLabel);
 
@@ -73,8 +80,19 @@ public class SwingUI extends JPanel implements ActionListener
 	addRow(m_restartButton, m_playButton, m_skipButton);
 
 	m_engine.addListener(new Engine.UpdateListener() {
-		public void onSongChanged(String newSong) {
-		    m_songLabel.setText(newSong);
+		public void onSongChanged(Song newSong) {
+		    m_bandButton.setText(newSong.bandName());
+
+		    String an = newSong.albumName();
+		    if (an == null) {
+			m_albumButton.setText("No Album");
+		    } else {
+			m_albumButton.setText(an);
+		    }
+		    m_albumButton.setEnabled(an != null);
+		    m_albumLockButton.setEnabled(an != null);
+
+		    m_songLabel.setText(newSong.songName());
 		}
 	    });
 
@@ -96,10 +114,11 @@ public class SwingUI extends JPanel implements ActionListener
 
     private static void runGUIApp(String path) {
 
-	SongProvider sp = new SongProvider(new PosixStorageProvider(path));
+	PosixStorageProvider psp = new PosixStorageProvider(path);
+	SongProvider sp = new SongProvider(psp);
 	sp.constructLibrary();
-	
-	final Engine engine = new Engine(sp, new SoxPlayer());
+	SoxPlayer pl = new SoxPlayer(psp);
+	final Engine engine = new Engine(sp, pl);
 
 	JFrame frame = new JFrame("MCotP");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

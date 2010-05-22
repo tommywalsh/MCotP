@@ -23,13 +23,17 @@ public class PosixStorageProvider implements StorageProvider
 	return getBandPath(band) + "/" + album;
     }
 
-    public String getSongPath(String band, String album, String song) {
+    private String getSongPath(String band, String album, String song) {
 	String sp = getBandPath(band);
 	if (album != null) {
 	    sp += "/" + album;
 	}
 	sp += "/" + song;
 	return sp;
+    }
+
+    public String getSongPath(Song song) {
+	return getSongPath(song.bandName(), song.albumName(), song.songName());
     }
 
     public Vector<String> getFilesOrDirs(String path, boolean getFiles)

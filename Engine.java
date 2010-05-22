@@ -5,12 +5,12 @@ public class Engine
 {
     private SongProvider m_provider;
     private Player m_player;
-    private String m_currentSongFile;
+    private Song m_currentSong;
     private boolean m_isPlaying;
     private HashSet<UpdateListener> m_listeners;
 
     public interface UpdateListener {
-	public void onSongChanged(String song);
+	public void onSongChanged(Song song);
     }
 
     Engine(SongProvider provider, Player player) {
@@ -18,8 +18,8 @@ public class Engine
 	m_provider = provider;
 	m_player = player;
 	m_isPlaying = false;
-	m_currentSongFile = m_provider.getCurrentSongFile();
-	m_player.setSongFile(m_currentSongFile);
+	m_currentSong = m_provider.getCurrentSong();
+	m_player.setSong(m_currentSong);
 	m_player.addListener(new Player.SongFinishedListener() {
 		public void onSongFinished() {
 		    nextSong();
@@ -31,11 +31,11 @@ public class Engine
 	m_listeners.add(l);
     }
 
-    public String getSongFile() {
-	return m_currentSongFile;
+    public Song getSong() {
+	return m_currentSong;
     }
 
-    private void notifySongChanged(String newSong) {
+    private void notifySongChanged(Song newSong) {
 	for (Iterator<UpdateListener> iter = m_listeners.iterator(); iter.hasNext();  ) {
 	    iter.next().onSongChanged(newSong);
 	}	
@@ -56,8 +56,8 @@ public class Engine
 	    assert genreClamp != null;
 	    m_provider.setGenreClamp(genreClamp);
 	}
-	String songFile = m_provider.getCurrentSongFile();
-	if (songFile != m_currentSongFile) {
+	Song song = m_provider.getCurrentSong();
+	if (song != m_currentSong) {
 	    nextSong();
 	}
     }
@@ -90,16 +90,17 @@ public class Engine
 
     public void nextSong() {
 	m_provider.advanceSong();
-	String songFile = m_provider.getCurrentSongFile();
+	Song song = m_provider.getCurrentSong();
 	m_player.pause();
-	m_player.setSongFile(songFile);
+	m_player.setSong(song);
 	if (m_isPlaying) {
 	    m_player.play();
 	}
-	notifySongChanged(songFile);
+	notifySongChanged(song);
     }
 
     // For testing
+    /*
     public static void main (String[] args)
     {
 	if (args.length != 1) {
@@ -122,6 +123,6 @@ public class Engine
 	    } catch (InterruptedException e) {
 	    }
 	}
-    }
+	}*/
 
 }

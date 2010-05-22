@@ -22,14 +22,12 @@ public class SongProvider
 {
     // The next two functions give an iterator-like interface
     // and allow the engine to easily cycle over all applicable songs
-    public String getCurrentSongFile() {
+    public Song getCurrentSong() {
 	String albumName = null;
 	if (m_currentAlbum != null) {
 	    albumName = m_currentAlbum.name;
 	}
-	return m_storage.getSongPath(m_currentBand.name,
-				     albumName,
-				     m_currentSong);
+	return new Song(m_currentBand.name, albumName, m_currentSong);
     }
 
     public void advanceSong() {

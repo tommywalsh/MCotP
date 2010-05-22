@@ -7,7 +7,6 @@ public interface StorageProvider
     public String getBandPath(String band);
     public String getAlbumPath(String band, String album);
 
-    // Pass null for Album in the case of loose songs
-    public String getSongPath(String band, String album, String song);
+    public String getSongPath(Song song);
     public Vector<String> getFilesOrDirs(String path, boolean getFiles);
 }

@@ -9,10 +9,12 @@ public class SoxPlayer implements Player, ExecThread.FinishedListener
 {
     private final String c_playCommand = "play";
     private ExecThread m_thread;
-    private String m_songFile;
+    private Song m_song;
     private HashSet<Player.SongFinishedListener> m_listeners = new HashSet<Player.SongFinishedListener>();
+    private StorageProvider m_storage;
 
-    SoxPlayer() {
+    SoxPlayer(StorageProvider sp) {
+	m_storage = sp;
     }
 
     public void onFinished() {
@@ -33,7 +35,7 @@ public class SoxPlayer implements Player, ExecThread.FinishedListener
 	String[] ca = new String[3];
 	ca[0] = c_playCommand;
 	ca[1] = "-q";
-	ca[2] = m_songFile;
+	ca[2] = m_storage.getSongPath(m_song);
 	m_thread = new ExecThread(ca, this);
 	m_thread.start();
     }
@@ -60,9 +62,9 @@ public class SoxPlayer implements Player, ExecThread.FinishedListener
     }
 
 
-    public void setSongFile(String songFile) {
+    public void setSong(Song song) {
 	stopCold();
-	m_songFile = songFile;
+	m_song = song;
     }
 
     /* For testing 
