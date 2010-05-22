@@ -2,6 +2,8 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.BoxLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -11,30 +13,64 @@ public class SwingUI extends JPanel implements ActionListener
     Engine m_engine;
     
     JButton m_shuffleButton;
+    
+    JButton m_genreButton;
+    JButton m_genreLockButton;
+
+    JButton m_bandButton;
+    JButton m_bandLockButton;
+
+    JLabel  m_songLabel;
+
+    JButton m_restartButton;
     JButton m_playButton;
     JButton m_skipButton;
-    JLabel  m_songLabel;
+
+    private void addRow(JComponent a, JComponent b, JComponent c) {
+	JPanel subPanel = new JPanel();
+	subPanel.add(a);
+	if (b != null) {
+	    subPanel.add(b);
+	    if (c != null) {
+		subPanel.add(c);
+	    }
+	}
+	add(subPanel);
+    }
 
     public SwingUI(JFrame frame, Engine engine) {
 	m_engine = engine;
 
-	m_shuffleButton = new JButton("Toggle shuffle mode");
+	setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+
+	m_shuffleButton = new JButton("Shuffle Mode");
 	m_shuffleButton.setActionCommand("shuffle");
 	m_shuffleButton.addActionListener(this);
 	add(m_shuffleButton);
 
+	m_genreButton     = new JButton("All genres");
+	m_genreLockButton = new JButton("Lock");
+	addRow(m_genreButton, m_genreLockButton, null);
+
+	m_bandButton = new JButton("Band");
+	m_bandLockButton = new JButton("Lock");
+	addRow(m_bandButton, m_bandLockButton, null);
+
+	m_songLabel = new JLabel("Song");
+	add(m_songLabel);
+
 	m_playButton = new JButton("Play/Pause");
 	m_playButton.setActionCommand("play");
 	m_playButton.addActionListener(this);
-	add(m_playButton);
 
 	m_skipButton = new JButton("Skip");
 	m_skipButton.setActionCommand("skip");
 	m_skipButton.addActionListener(this);
-	add(m_skipButton);
 
-	m_songLabel = new JLabel(engine.getSongFile());
-	add(m_songLabel);
+	m_restartButton = new JButton("Back");
+	m_restartButton.setActionCommand("back");
+	m_restartButton.addActionListener(this);
+	addRow(m_restartButton, m_playButton, m_skipButton);
 
 	m_engine.addListener(new Engine.UpdateListener() {
 		public void onSongChanged(String newSong) {
@@ -52,6 +88,8 @@ public class SwingUI extends JPanel implements ActionListener
 	    m_engine.togglePlayPause();
 	} else if (ac.equals("skip")) {
 	    m_engine.nextSong();
+	} else if (ac.equals("back")) {
+	    m_engine.restartSong();
 	}
     }
 
