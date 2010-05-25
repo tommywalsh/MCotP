@@ -16,3 +16,6 @@ the work as possible, and then two adapters for Android phones and
 The software is written in Java to make it easier to share between 
 Android phones and desktops.
 
+
+To build:
+$ java -d bin src/*java

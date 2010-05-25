@@ -386,24 +386,5 @@ public class SongProvider
     /////////////////////////////////////////////////////////////////////
 
 
-
-
-
-    /*
-    // Temporary: for testing purposes
-    public static void main(String[] args)
-    {
-	SongProvider provider = new SongProvider(new PosixStorageProvider("/media/mcotp"));
-	provider.constructLibrary();
-
-	for (int j=0; j<5; ++j) {
-	    for (int i=0; i < 20; ++i) {
-		System.out.println( "Now playing: " + provider.getCurrentSongFile());
-		provider.advanceSong();
-	    }
-	    provider.toggleRandom();
-	}
-    }
-    */
 }
 

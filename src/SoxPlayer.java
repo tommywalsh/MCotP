@@ -67,35 +67,4 @@ public class SoxPlayer implements Player, ExecThread.FinishedListener
 	m_song = song;
     }
 
-    /* For testing 
-    public static final void main(String[] args) {
-	SoxPlayer sp = new SoxPlayer();
-
-	try {
-	    System.out.println("Starting song, then waiting four seconds, then pausing\n");
-	    System.out.flush();
-	    sp.setSongFile("jmp.mp3");
-	    sp.play();
-	    Thread.sleep(4000);
-	    sp.pause();
-
-	    System.out.println("Starting song, then waiting four seconds, then restarting\n");
-	    System.out.flush();
-	    sp.play();
-	    Thread.sleep(4000);
-	    sp.restartSong();
-
-	    System.out.println("Pausing 4 more seconds, then starting another song\n");
-	    Thread.sleep(4000);
-	    sp.setSongFile("/media/mcotp/ABC/Look of Love.mp3");
-	    sp.play();
- 	    Thread.sleep(4000);
-	    sp.pause();
-
-	} catch (InterruptedException e) {
-	    System.out.println("Interrupted\n");
-	    System.out.flush();	    
-	}
-    }
-    */
 }
