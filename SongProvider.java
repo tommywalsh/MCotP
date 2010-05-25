@@ -13,8 +13,6 @@ import java.util.Random;
 // TO-DO List
 //
 // * Serialize our cache of songs to speed loading
-// * Implement clamping
-// * Filter out non-music
 //
 
 
@@ -50,15 +48,24 @@ public class SongProvider
     
     // Only serve up songs of the given genre
     public void setGenreClamp(String genreClamp)
-    {}
+    {
+        m_bandClamp = "";
+        m_albumClamp = "";
+    }
 
     // Only serve up songs from a single band
     public void setBandClamp(String band)
-    {}
+    {
+        m_bandClamp = band;
+        m_albumClamp = "";
+    }
 
     // Only serve up songs from a single album
     public void setAlbumClamp(String band, String album)
-    {}
+    {
+        m_bandClamp = band;
+        m_albumClamp = album;
+    }
 
 
 
@@ -336,7 +343,7 @@ public class SongProvider
     }
 
     private void advanceToNextLinearSong() {
-	if (m_albumClamp != "") {
+	if (m_albumClamp != null && m_albumClamp != "") {
 	    // Might wrap to beginning of album
 	    advanceToNextAlbumSong();
 	} else if (m_currentAlbum != null && m_currentSongNumber < m_currentAlbum.lastSong()) {
@@ -359,7 +366,21 @@ public class SongProvider
 
     Random m_random = new Random();
     private void advanceToRandomSong() {
-	advanceToSpecificSong(m_random.nextInt(m_numSongs));
+        int firstValid = 0;
+        int numValid = m_numSongs;
+        if (m_albumClamp != null && m_albumClamp != "") {
+            AlbumInfo ai = m_currentAlbum;
+            assert (ai.name.equals(m_albumClamp));  // implement random clamping later
+            firstValid = ai.firstSong;
+            numValid = ai.numSongs;
+        } else if (m_bandClamp != "") {
+            BandInfo bi = m_currentBand;
+            assert (bi.name.equals(m_bandClamp));  // implement random clamping later
+            firstValid = bi.firstSong;
+            numValid = bi.numSongs;
+        }
+
+	advanceToSpecificSong(firstValid + m_random.nextInt(numValid));
     }
 
     /////////////////////////////////////////////////////////////////////

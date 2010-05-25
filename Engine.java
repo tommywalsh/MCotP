@@ -57,7 +57,7 @@ public class Engine
 	    m_provider.setGenreClamp(genreClamp);
 	}
 	Song song = m_provider.getCurrentSong();
-	if (song != m_currentSong) {
+	if (!song.equals(m_currentSong)) {
 	    nextSong();
 	}
     }
@@ -96,6 +96,7 @@ public class Engine
 	if (m_isPlaying) {
 	    m_player.play();
 	}
+        m_currentSong = song;
 	notifySongChanged(song);
     }
 

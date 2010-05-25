@@ -57,10 +57,14 @@ public class SwingUI extends JPanel implements ActionListener
 
 	m_bandButton = new JButton("Band");
 	m_bandLockButton = new JButton("Lock");
+        m_bandLockButton.setActionCommand("lock band");
+        m_bandLockButton.addActionListener(this);
 	addRow(m_bandButton, m_bandLockButton, null);
 
 	m_albumButton = new JButton("Album");
 	m_albumLockButton = new JButton("Lock");
+        m_albumLockButton.setActionCommand("lock album");
+        m_albumLockButton.addActionListener(this);
 	addRow(m_albumButton, m_albumLockButton, null);
 
 	m_songLabel = new JLabel("Song");
@@ -108,7 +112,25 @@ public class SwingUI extends JPanel implements ActionListener
 	    m_engine.nextSong();
 	} else if (ac.equals("back")) {
 	    m_engine.restartSong();
-	}
+	} else if (ac.equals("lock band")) {
+            if (m_bandLockButton.getText().equals("Unlock")) {
+                m_bandLockButton.setText("Lock");
+                m_engine.setClamp(null, null, null);
+            } else {                
+                m_engine.setClamp(null, m_bandButton.getText(), null);
+                m_bandLockButton.setText("Unlock");
+                m_albumLockButton.setText("Lock");
+            }
+        } else if (ac.equals("lock album")) {
+            if (m_albumLockButton.getText().equals("Unlock")) {
+                m_albumLockButton.setText("Lock");
+                m_engine.setClamp(null, null, null);
+            } else {                
+                m_engine.setClamp(null, m_bandButton.getText(), m_albumButton.getText());
+                m_bandLockButton.setText("Lock");
+                m_albumLockButton.setText("Unlock");
+            }
+        }
     }
 
 
