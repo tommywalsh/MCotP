@@ -18,4 +18,9 @@ Android phones and desktops.
 
 
 To build:
-$ java -d bin src/*java
+$ ant
+
+To run on a computer:
+$ CLASSPATH=$CLASSPATH:bin java SwingUI
+
+Running on Android not yet supported
