@@ -1,27 +1,59 @@
 <project default="jar">
 
-  <target name="clean">
+  <target name="shared.clean">
+    <delete dir="shared/bin" />
+  </target>
+  
+  <target name="computer.clean">
+    <delete dir="computer/bin" />
+  </target>
+
+  <target name="clean" depends="shared.clean,computer.clean">
     <delete dir="bin" />
   </target>
 
   
-  <target name="compile">
-    <mkdir dir="bin/classes" />
-    <javac srcdir="src" destdir="bin/classes" />
+  <target name="shared.compile">
+    <mkdir dir="shared/bin" />
+    <javac srcdir="shared/src" destdir="shared/bin" />
   </target>
 
-  <target name="jar" depends="compile">
-    <mkdir dir="bin/jar" />
-    <jar destfile="bin/jar/mcotp.jar" basedir="bin/classes">
+  <target name="computer.compile" depends="shared.jar">
+    <mkdir dir="computer/bin" />
+    <javac srcdir="computer/src" 
+	   destdir="computer/bin" 
+	   classpath="bin/mcotp-shared.jar" />
+  </target>
+
+  <target name="compile" depends="shared.compile" />
+    
+			
+
+  <target name="shared.jar" depends="shared.compile">
+    <mkdir dir="bin" />
+    <jar destfile="bin/mcotp-shared.jar" 
+	 basedir="shared/bin" />
+  </target>
+
+  <target name="computer.jar" depends="computer.compile,shared.jar">
+    <mkdir dir="bin" />
+    <jar destfile="bin/mcotp-computer.jar" 
+	 basedir="computer/bin">
       <manifest>
 	<attribute name="Main-Class" value="SwingUI" />
-      </manifest>
+	<attribute name="Class-Path" value="mcotp-shared.jar" />
+      </manifest> 
     </jar>
   </target>
 
-  <target name="run" depends="jar">
+  <target name="shared" depends="shared.jar" />
+  
+  <target name="jar" depends="shared.jar,computer.jar" />
+
+  <target name="run" depends="computer.jar">
     <property environment="env" />
-    <java jar="bin/jar/mcotp.jar" fork="true" >
+    <java jar="bin/mcotp-computer.jar" 
+	  fork="true" >
       <arg value="${env.MCOTP}" />
     </java>
   </target>

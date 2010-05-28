@@ -9,18 +9,31 @@ means music is organized in paths like "band/album/song.ext".  For
 example:
 /path/to/library/Replacements/Pleased to Meet Me/10 - Skyway.mp3
 
-There will be three parts: a generic part that handles as much of
-the work as possible, and then two adapters for Android phones and 
-"normal" computers.  These adapters will be as small as possible.
-
 The software is written in Java to make it easier to share between 
-Android phones and desktops.
+phones and desktops.
+
+There will be three parts: 
+
+1) A "shared" layer that handles as much of the work as possible.  
+   This is code will work on either computers or (Android) phones. 
+ 
+2) A "computer" layer that adds to the shared layer.  This includes
+   a Swing UI, an adapter for the sound card, and an adapter for the
+   hard drive.  This code assumes the existence of a POSIX filesystem,
+   and the Sox-provided "play" command.
+
+3) An "android" layer that adds to the shared layer.  This will likewise
+   include a UI, and audio and SDCard adapters.
 
 
-To build:
+
+To build everything:
 $ ant jar
 or just
 $ ant
+
+To build only shared components:
+$ ant shared
 
 To run on a computer:
 $ MCOTP=/path/to/library ant run
