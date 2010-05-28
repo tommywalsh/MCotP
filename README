@@ -18,9 +18,11 @@ Android phones and desktops.
 
 
 To build:
+$ ant jar
+or just
 $ ant
 
 To run on a computer:
-$ CLASSPATH=$CLASSPATH:bin java SwingUI
+$ MCOTP=/path/to/library ant run
 
 Running on Android not yet supported

@@ -1,7 +1,29 @@
-<project default="compile">
+<project default="jar">
+
+  <target name="clean">
+    <delete dir="bin" />
+  </target>
+
   
   <target name="compile">
-    <javac srcdir="src" destdir="bin" />
+    <mkdir dir="bin/classes" />
+    <javac srcdir="src" destdir="bin/classes" />
+  </target>
+
+  <target name="jar" depends="compile">
+    <mkdir dir="bin/jar" />
+    <jar destfile="bin/jar/mcotp.jar" basedir="bin/classes">
+      <manifest>
+	<attribute name="Main-Class" value="SwingUI" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="run" depends="jar">
+    <property environment="env" />
+    <java jar="bin/jar/mcotp.jar" fork="true" >
+      <arg value="${env.MCOTP}" />
+    </java>
   </target>
 
 </project>
