@@ -1,3 +1,4 @@
+package mcotp;
 
 public interface Player
 {

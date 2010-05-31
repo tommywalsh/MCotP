@@ -28,7 +28,7 @@ There will be three parts:
 
 
 To build everything:
-$ ant jar
+$ ant build
 or just
 $ ant
 

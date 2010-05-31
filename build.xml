@@ -1,38 +1,63 @@
-<project default="jar">
+<project default="build">
+
+<!-- GENERIC TARGETS -->
+  <target name="clean" depends="shared.clean,computer.clean,android.clean">
+    <delete dir="bin" />
+  </target>
+
+  <target name="compile" depends="shared.compile,computer.compile,android.compile" />
+    
+  <target name="jar" depends="shared.jar,computer.jar" />
+
+  <target name="build" depends="jar,android.build" />
+
+  <target name="run" depends="computer.jar">
+    <property environment="env" />
+    <java jar="bin/mcotp-computer.jar" 
+	  fork="true" >
+      <arg value="${env.MCOTP}" />
+    </java>
+  </target>
+<!-- END OF GENERIC TARGETS -->
+
+
+
+
+<!-- TARGETS FOR SHARED CODE -->
 
   <target name="shared.clean">
     <delete dir="shared/bin" />
   </target>
-  
-  <target name="computer.clean">
-    <delete dir="computer/bin" />
-  </target>
 
-  <target name="clean" depends="shared.clean,computer.clean">
-    <delete dir="bin" />
-  </target>
-
-  
   <target name="shared.compile">
     <mkdir dir="shared/bin" />
     <javac srcdir="shared/src" destdir="shared/bin" />
   </target>
 
+  <target name="shared.jar" depends="shared.compile">
+    <mkdir dir="bin" />
+    <jar destfile="bin/mcotp-shared.jar" 
+	 basedir="shared/bin" />
+  </target>
+
+  <target name="shared" depends="shared.jar" />
+
+<!-- END OF SHARED TARGETS -->
+
+
+<!-- TARGETS FOR COMPUTER CODE -->
+
+  
+  <target name="computer.clean">
+    <delete dir="computer/bin" />
+  </target>
+
+  
   <target name="computer.compile" depends="shared.jar">
     <mkdir dir="computer/bin" />
     <javac srcdir="computer/src" 
 	   destdir="computer/bin" 
 	   classpath="bin/mcotp-shared.jar" />
-  </target>
-
-  <target name="compile" depends="shared.compile" />
-    
-			
-
-  <target name="shared.jar" depends="shared.compile">
-    <mkdir dir="bin" />
-    <jar destfile="bin/mcotp-shared.jar" 
-	 basedir="shared/bin" />
   </target>
 
   <target name="computer.jar" depends="computer.compile,shared.jar">
@@ -45,17 +70,30 @@
       </manifest> 
     </jar>
   </target>
+<!-- END OF COMPUTER TARGETS -->
 
-  <target name="shared" depends="shared.jar" />
   
-  <target name="jar" depends="shared.jar,computer.jar" />
-
-  <target name="run" depends="computer.jar">
-    <property environment="env" />
-    <java jar="bin/mcotp-computer.jar" 
-	  fork="true" >
-      <arg value="${env.MCOTP}" />
-    </java>
+<!-- ANDROID TARGETS -->
+  <target name="android.prep">
+    <copy todir="android-build/src">
+      <fileset dir="shared/src" />
+    </copy>
+    <copy todir="android-build/src">
+      <fileset dir="android/src" />
+    </copy>
   </target>
+
+  <target name="android.clean">
+    <delete dir="android-build/src" />
+  </target>
+
+  <target name="android.compile" depends="android.prep">
+    <ant dir="android-build" target="compile" />
+  </target>
+
+  <target name="android.build" depends="android.compile">
+    <ant dir="android-build" target="debug" />
+  </target>
+<!-- END OF ANDROID TARGETS -->
 
 </project>
