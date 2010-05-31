@@ -75,16 +75,17 @@
   
 <!-- ANDROID TARGETS -->
   <target name="android.prep">
-    <copy todir="android-build/src">
-      <fileset dir="shared/src" />
-    </copy>
-    <copy todir="android-build/src">
-      <fileset dir="android/src" />
+    <copy todir="android-build">
+      <fileset dir="android" />
     </copy>
   </target>
 
   <target name="android.clean">
     <delete dir="android-build/src" />
+    <delete dir="android-build/res" />
+    <delete file="android-build/AndroidManifest.xml" />
+    <delete file="android-build/build.properties" />
+    <delete file="android-build/build.xml" />
   </target>
 
   <target name="android.compile" depends="android.prep">
