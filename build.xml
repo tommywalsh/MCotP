@@ -84,6 +84,9 @@
     <copy todir="android-build">
       <fileset dir="android" />
     </copy>
+    <copy todir="android-build/src/com/github/tommywalsh/mcotp/shared">
+      <fileset dir="src/com/github/tommywalsh/mcotp/shared" />
+    </copy>
   </target>
 
   <target name="android.clean">
@@ -101,6 +104,8 @@
   <target name="android.build" depends="android.compile">
     <ant dir="android-build" target="debug" />
   </target>
+
+  <target name="android" depends="android.build" />
 <!-- END OF ANDROID TARGETS -->
 
 </project>

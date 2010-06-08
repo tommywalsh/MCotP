@@ -1,6 +1,7 @@
-package com.github.tommywalsh.mcotp;
+package com.github.tommywalsh.mcotp.android;
 
-import mcotp.*;
+import com.github.tommywalsh.mcotp.shared.*;
+
 import android.app.Activity;
 import android.os.Bundle;
 import java.util.Vector;
@@ -9,6 +10,18 @@ import android.widget.TextView;
 
 public class AndroidUI extends Activity
 {
+    private void init() {
+	PosixStorageProvider psp = new PosixStorageProvider("/sdcard/music");
+	SongProvider sp = new SongProvider(psp);
+	sp.constructLibrary();
+	AndroidPlayer pl = new AndroidPlayer(psp);
+	final Engine engine = new Engine(sp, pl);
+
+    }
+
+
+    private TextView m_songText;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -16,14 +29,12 @@ public class AndroidUI extends Activity
         super.onCreate(savedInstanceState);
 	setContentView(R.layout.main);
 
-	TextView tv = (TextView) findViewById(R.id.songText);
+	init();
+	m_songText = (TextView) findViewById(R.id.songText);
 
 	PosixStorageProvider psp = new PosixStorageProvider("/sdcard/music");
 	Vector<String> vs = psp.getFilesOrDirs(psp.getLibraryPath(), false);
-	//	TextView tv = new TextView(this);
 	Integer s = vs.size();
-	tv.setText("Number of bands: " + s.toString());
-	//	tv.setText(vs.elementAt(s-1));
-	//	setContentView(tv);
+	m_songText.setText("Number of bands: " + s.toString());
     }
 }
