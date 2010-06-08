@@ -1,4 +1,5 @@
-package mcotp;
+package com.github.tommywalsh.mcotp.shared;
+
 
 public interface Player
 {

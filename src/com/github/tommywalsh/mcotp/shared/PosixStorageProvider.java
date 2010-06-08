@@ -1,4 +1,5 @@
-package mcotp;
+package com.github.tommywalsh.mcotp.shared;
+
 
 import java.io.File;
 import java.util.Vector;

@@ -1,4 +1,7 @@
-package mcotp;
+package com.github.tommywalsh.mcotp.shared;
+
+import com.github.tommywalsh.mcotp.*;
+
 public class Song
 {
     private String m_band;

@@ -1,4 +1,5 @@
-package mcotp;
+package com.github.tommywalsh.mcotp.shared;
+
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -14,7 +15,7 @@ public class Engine
 	public void onSongChanged(Song song);
     }
 
-    Engine(SongProvider provider, Player player) {
+    public Engine(SongProvider provider, Player player) {
 	m_listeners = new HashSet<UpdateListener>();
 	m_provider = provider;
 	m_player = player;

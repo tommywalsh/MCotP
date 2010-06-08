@@ -1,4 +1,4 @@
-package mcotp;
+package com.github.tommywalsh.mcotp.shared;
 
 import java.util.Vector;
 import java.util.TreeMap;
@@ -69,6 +69,10 @@ public class SongProvider
         m_albumClamp = album;
     }
 
+    public SongProvider(StorageProvider sp) {
+	m_storage = sp;
+    }
+
 
 
     ///////// END OF PUBLIC INTERFACE //////////
@@ -99,10 +103,6 @@ public class SongProvider
     private BandInfo m_currentBand;
     private AlbumInfo m_currentAlbum;
 
-
-    SongProvider(StorageProvider sp) {
-	m_storage = sp;
-    }
 
 
 
@@ -221,7 +221,7 @@ public class SongProvider
 
 
     
-    void constructLibrary()
+    public void constructLibrary()
     {
 	int nextSongNum = 0;
 	m_allBands = new Vector<BandInfo>();

@@ -26,18 +26,18 @@
 <!-- TARGETS FOR SHARED CODE -->
 
   <target name="shared.clean">
-    <delete dir="shared/bin" />
+    <delete dir="bin/classes/shared" />
   </target>
 
   <target name="shared.compile">
-    <mkdir dir="shared/bin" />
-    <javac srcdir="shared/src" destdir="shared/bin" />
+    <mkdir dir="bin/classes/shared" />
+    <javac srcdir="src/com/github/tommywalsh/mcotp/shared" destdir="bin/classes/shared" />
   </target>
 
   <target name="shared.jar" depends="shared.compile">
     <mkdir dir="bin" />
     <jar destfile="bin/mcotp-shared.jar" 
-	 basedir="shared/bin" />
+	 basedir="bin/classes/shared" />
   </target>
 
   <target name="shared" depends="shared.jar" />
@@ -55,7 +55,8 @@
   
   <target name="computer.compile" depends="shared.jar">
     <mkdir dir="computer/bin" />
-    <javac srcdir="computer/src" 
+    <javac 
+           srcdir="computer/src" 
 	   destdir="computer/bin" 
 	   classpath="bin/mcotp-shared.jar" />
   </target>
