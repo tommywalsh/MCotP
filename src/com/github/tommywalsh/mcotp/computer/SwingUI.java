@@ -1,4 +1,7 @@
-package mcotp;
+package com.github.tommywalsh.mcotp.computer;
+
+import com.github.tommywalsh.mcotp.shared.*;
+
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;

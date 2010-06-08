@@ -1,4 +1,7 @@
-package mcotp;
+package com.github.tommywalsh.mcotp.computer;
+
+import com.github.tommywalsh.mcotp.shared.*;
+
 import java.lang.Process;
 import java.lang.Runtime;
 import java.io.IOException;

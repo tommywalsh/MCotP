@@ -13,7 +13,8 @@
 
   <target name="run" depends="computer.jar">
     <property environment="env" />
-    <java jar="bin/mcotp-computer.jar" 
+    <java jar="bin/mcotp-computer.jar"
+	  classpath="bin/mcotp-shared.jar"
 	  fork="true" >
       <arg value="${env.MCOTP}" />
     </java>
@@ -27,6 +28,7 @@
 
   <target name="shared.clean">
     <delete dir="bin/classes/shared" />
+    <delete file="bin/mcotp-shared.jar" />
   </target>
 
   <target name="shared.compile">
@@ -49,28 +51,31 @@
 
   
   <target name="computer.clean">
-    <delete dir="computer/bin" />
+    <delete dir="bin/classes/computer" />
+    <delete file="bin/mcotp-computer.jar" />
   </target>
 
   
   <target name="computer.compile" depends="shared.jar">
-    <mkdir dir="computer/bin" />
+    <mkdir dir="bin/classes/computer" />
     <javac 
-           srcdir="computer/src" 
-	   destdir="computer/bin" 
+           srcdir="src/com/github/tommywalsh/mcotp/computer" 
+	   destdir="bin/classes/computer" 
 	   classpath="bin/mcotp-shared.jar" />
   </target>
 
   <target name="computer.jar" depends="computer.compile,shared.jar">
     <mkdir dir="bin" />
     <jar destfile="bin/mcotp-computer.jar" 
-	 basedir="computer/bin">
+	 basedir="bin/classes/computer">
       <manifest>
-	<attribute name="Main-Class" value="SwingUI" />
+	<attribute name="Main-Class" value="com.github.tommywalsh.mcotp.computer.SwingUI" />
 	<attribute name="Class-Path" value="mcotp-shared.jar" />
       </manifest> 
     </jar>
   </target>
+
+  <target name="computer" depends="computer.jar" />
 <!-- END OF COMPUTER TARGETS -->
 
   
