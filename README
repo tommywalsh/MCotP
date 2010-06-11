@@ -38,4 +38,5 @@ $ ant shared
 To run on a computer:
 $ MCOTP=/path/to/library ant run
 
-Running on Android not yet supported
+To install on a connected Android device
+$ ant android.install

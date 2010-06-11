@@ -105,6 +105,10 @@
     <ant dir="android-build" target="debug" />
   </target>
 
+  <target name="android.install" depends="android.build">
+    <ant dir="android-build" target="install" />
+  </target>
+
   <target name="android" depends="android.build" />
 <!-- END OF ANDROID TARGETS -->
 
