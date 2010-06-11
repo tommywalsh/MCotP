@@ -12,6 +12,8 @@ public class AndroidUI extends Activity
 {
     private AndroidPlayer m_player;
     private SongProvider m_songProvider;
+    private TextView m_bandText;
+    private TextView m_albumText;
     private TextView m_songText;
     private Engine m_engine;
 
@@ -25,10 +27,13 @@ public class AndroidUI extends Activity
 
 	initializeInternals();
 
+	startPlaying();
     }
 
     private void snagUIElements() {
-	m_songText = (TextView) findViewById(R.id.songText);
+	m_songText  = (TextView) findViewById(R.id.songText);
+	m_bandText  = (TextView) findViewById(R.id.bandText);
+	m_albumText = (TextView) findViewById(R.id.albumText);
     }
     
     private void initializeInternals() {
@@ -58,6 +63,8 @@ public class AndroidUI extends Activity
     }
 
     private void updateSongDisplay(Song song) {
+	m_bandText.setText(song.bandName());
+	m_albumText.setText(song.albumName());
 	m_songText.setText(song.songName());
     }
 }
