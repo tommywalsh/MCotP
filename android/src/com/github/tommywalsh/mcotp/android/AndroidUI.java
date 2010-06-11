@@ -6,7 +6,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import java.util.Vector;
 import android.widget.TextView;
-
+import android.widget.Button;
+import android.view.View;
 
 public class AndroidUI extends Activity
 {
@@ -15,6 +16,7 @@ public class AndroidUI extends Activity
     private TextView m_bandText;
     private TextView m_albumText;
     private TextView m_songText;
+    private Button m_playPauseButton;
     private Engine m_engine;
 
     /** Called when the activity is first created. */
@@ -34,6 +36,26 @@ public class AndroidUI extends Activity
 	m_songText  = (TextView) findViewById(R.id.songText);
 	m_bandText  = (TextView) findViewById(R.id.bandText);
 	m_albumText = (TextView) findViewById(R.id.albumText);
+
+	m_playPauseButton = (Button) findViewById(R.id.playPauseButton);
+	m_playPauseButton.setOnClickListener(new View.OnClickListener() {
+		public void onClick(View v) {
+		    m_engine.togglePlayPause();
+		    if (m_engine.isPlaying()) {
+			m_playPauseButton.setText("Pause");
+		    } else {
+			m_playPauseButton.setText("Play");
+		    }
+		}
+	    });
+
+	Button skipButton = (Button) findViewById(R.id.skipButton);
+	skipButton.setOnClickListener(new View.OnClickListener() {
+		public void onClick(View v) {
+		    m_engine.nextSong();
+		}
+	    });
+
     }
     
     private void initializeInternals() {

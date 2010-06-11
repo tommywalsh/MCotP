@@ -77,6 +77,10 @@ public class Engine
 	}
     }
 
+    public boolean isPlaying() {
+	return m_isPlaying;
+    }
+
     public void togglePlayPause() {
 	if (m_isPlaying) {
 	    pause();

@@ -25,5 +25,19 @@
      android:text="SongTitle"
      />
 
+  <Button
+     android:id="@+id/playPauseButton"
+     android:layout_width="fill_parent" 
+     android:layout_height="wrap_content" 
+     android:text="PlayPauseButton"
+     />
+
+  <Button
+     android:id="@+id/skipButton"
+     android:layout_width="fill_parent" 
+     android:layout_height="wrap_content" 
+     android:text="SkipButton"
+     />
+
 </LinearLayout>
 
