@@ -17,6 +17,8 @@ public class AndroidUI extends Activity
     private TextView m_albumText;
     private TextView m_songText;
     private Button m_playPauseButton;
+    private Button m_bandLockButton;
+    private Button m_albumLockButton;
     private Engine m_engine;
 
     /** Called when the activity is first created. */
@@ -55,6 +57,40 @@ public class AndroidUI extends Activity
 		    m_engine.nextSong();
 		}
 	    });
+	
+	m_bandLockButton = (Button) findViewById(R.id.bandLockButton);
+	m_bandLockButton.setText("Lock");
+	m_bandLockButton.setOnClickListener(new View.OnClickListener() {
+		public void onClick(View v) {
+		    if (m_bandLockButton.getText().equals("Lock")) {
+			m_engine.setClamp(null, m_engine.getSong().bandName(), null);
+			m_bandLockButton.setText("Unlock");
+			m_albumLockButton.setText("Lock");
+		    } else {
+			m_engine.setClamp(null, null, null);
+			m_bandLockButton.setText("Lock");
+			m_albumLockButton.setText("Lock");
+		    }
+		}
+	    });
+	
+	m_albumLockButton = (Button) findViewById(R.id.albumLockButton);
+	m_albumLockButton.setText("Lock");
+	m_albumLockButton.setOnClickListener(new View.OnClickListener() {
+		public void onClick(View v) {
+		    if (m_albumLockButton.getText().equals("Lock")) {
+			m_engine.setClamp(null, m_engine.getSong().bandName(), 
+					  m_engine.getSong().albumName());
+			m_bandLockButton.setText("Lock");
+			m_albumLockButton.setText("Unlock");
+		    } else {
+			m_engine.setClamp(null, null, null);
+			m_bandLockButton.setText("Lock");
+			m_albumLockButton.setText("Lock");
+		    }
+		}
+	    });
+	
 
     }
     

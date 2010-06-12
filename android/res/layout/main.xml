@@ -1,43 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	      android:orientation="vertical"
-	      android:layout_width="fill_parent"
-	      android:layout_height="fill_parent"
-	      >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	 	android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		>
+
+  <Button
+     android:id="@+id/bandLockButton"
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:layout_alignParentLeft="true" 
+     android:text="BandLockButton"
+     />
+  
   <TextView
      android:id="@+id/bandText"
-     android:layout_width="fill_parent" 
+     android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
+     android:layout_toRightOf="@id/bandLockButton"
+     android:layout_alignTop="@id/bandLockButton"
      android:text="BandText"
+     />
+  
+  <Button
+     android:id="@+id/albumLockButton"
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:layout_alignParentLeft="true" 
+     android:layout_below="@id/bandLockButton" 
+     android:text="AlbumLockButton"
      />
 
   <TextView
      android:id="@+id/albumText"
-     android:layout_width="fill_parent" 
+     android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
+     android:layout_toRightOf="@id/albumLockButton"
+     android:layout_below="@id/bandLockButton" 
      android:text="AlbumText"
      />
 
   <TextView
      android:id="@+id/songText"
-     android:layout_width="fill_parent" 
+     android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
+     android:layout_below="@id/albumLockButton"
      android:text="SongTitle"
      />
 
   <Button
      android:id="@+id/playPauseButton"
-     android:layout_width="fill_parent" 
+     android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
+     android:layout_below="@id/songText"
+     android:layout_centerHorizontal="true"
      android:text="PlayPauseButton"
      />
 
   <Button
      android:id="@+id/skipButton"
-     android:layout_width="fill_parent" 
+     android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
-     android:text="SkipButton"
+     android:layout_below="@id/playPauseButton"
+     android:layout_centerHorizontal="true"
+     android:text="Skip"
      />
 
-</LinearLayout>
+</RelativeLayout>
 
