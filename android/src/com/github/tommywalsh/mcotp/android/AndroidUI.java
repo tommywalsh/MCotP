@@ -22,6 +22,9 @@ public class AndroidUI extends Activity
     private Button m_shuffleButton;
     private Engine m_engine;
 
+    private boolean m_albumLocked;
+    private boolean m_bandLocked;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -63,14 +66,17 @@ public class AndroidUI extends Activity
 	m_bandLockButton.setText(R.string.lock);
 	m_bandLockButton.setOnClickListener(new View.OnClickListener() {
 		public void onClick(View v) {
-		    if (m_bandLockButton.getText().equals(R.string.lock)) {
-			m_engine.setClamp(null, m_engine.getSong().bandName(), null);
-			m_bandLockButton.setText(R.string.unlock);
-			m_albumLockButton.setText(R.string.lock);
-		    } else {
+		    if (m_bandLocked) {
 			m_engine.setClamp(null, null, null);
 			m_bandLockButton.setText(R.string.lock);
 			m_albumLockButton.setText(R.string.lock);
+			m_bandLocked = false;
+		    } else {
+			m_engine.setClamp(null, m_engine.getSong().bandName(), null);
+			m_bandLockButton.setText(R.string.unlock);
+			m_albumLockButton.setText(R.string.lock);
+			m_bandLocked = true;
+			m_albumLocked = false;
 		    }
 		}
 	    });
@@ -79,15 +85,18 @@ public class AndroidUI extends Activity
 	m_albumLockButton.setText(R.string.lock);
 	m_albumLockButton.setOnClickListener(new View.OnClickListener() {
 		public void onClick(View v) {
-		    if (m_albumLockButton.getText().equals(R.string.lock)) {
+		    if (m_albumLocked) {
+			m_engine.setClamp(null, null, null);
+			m_bandLockButton.setText(R.string.lock);
+			m_albumLockButton.setText(R.string.lock);
+			m_albumLocked = false;
+		    } else {
 			m_engine.setClamp(null, m_engine.getSong().bandName(), 
 					  m_engine.getSong().albumName());
 			m_bandLockButton.setText(R.string.lock);
 			m_albumLockButton.setText(R.string.unlock);
-		    } else {
-			m_engine.setClamp(null, null, null);
-			m_bandLockButton.setText(R.string.lock);
-			m_albumLockButton.setText(R.string.lock);
+			m_albumLocked = true;
+			m_bandLocked = false;
 		    }
 		}
 	    });
