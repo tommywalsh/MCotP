@@ -1,6 +1,8 @@
 package com.github.tommywalsh.mcotp.shared;
 
 import com.github.tommywalsh.mcotp.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class Song
 {
@@ -56,5 +58,14 @@ public class Song
 
     public String songName() {
         return m_songFile;
+    }
+    
+    private static Pattern s_extRE = Pattern.compile("\\..*$");
+    private static Pattern s_idxRE = Pattern.compile("^\\d+ *- *");
+    public String songDisplayName() {
+	Matcher m = s_extRE.matcher(songName());
+	String noext = m.replaceFirst("");
+	m = s_idxRE.matcher(noext);
+	return m.replaceFirst("");
     }
 }

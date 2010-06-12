@@ -147,6 +147,6 @@ public class AndroidUI extends Activity
     private void updateSongDisplay(Song song) {
 	m_bandText.setText(song.bandName());
 	m_albumText.setText(song.albumName());
-	m_songText.setText(song.songName());
+	m_songText.setText(song.songDisplayName());
     }
 }
