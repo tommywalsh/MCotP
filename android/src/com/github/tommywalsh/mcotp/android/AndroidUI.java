@@ -45,9 +45,9 @@ public class AndroidUI extends Activity
 		public void onClick(View v) {
 		    m_engine.togglePlayPause();
 		    if (m_engine.isPlaying()) {
-			m_playPauseButton.setText("Pause");
+			m_playPauseButton.setText(R.string.pause);
 		    } else {
-			m_playPauseButton.setText("Play");
+			m_playPauseButton.setText(R.string.play);
 		    }
 		}
 	    });
@@ -60,48 +60,48 @@ public class AndroidUI extends Activity
 	    });
 	
 	m_bandLockButton = (Button) findViewById(R.id.bandLockButton);
-	m_bandLockButton.setText("Lock");
+	m_bandLockButton.setText(R.string.lock);
 	m_bandLockButton.setOnClickListener(new View.OnClickListener() {
 		public void onClick(View v) {
-		    if (m_bandLockButton.getText().equals("Lock")) {
+		    if (m_bandLockButton.getText().equals(R.string.lock)) {
 			m_engine.setClamp(null, m_engine.getSong().bandName(), null);
-			m_bandLockButton.setText("Unlock");
-			m_albumLockButton.setText("Lock");
+			m_bandLockButton.setText(R.string.unlock);
+			m_albumLockButton.setText(R.string.lock);
 		    } else {
 			m_engine.setClamp(null, null, null);
-			m_bandLockButton.setText("Lock");
-			m_albumLockButton.setText("Lock");
+			m_bandLockButton.setText(R.string.lock);
+			m_albumLockButton.setText(R.string.lock);
 		    }
 		}
 	    });
 	
 	m_albumLockButton = (Button) findViewById(R.id.albumLockButton);
-	m_albumLockButton.setText("Lock");
+	m_albumLockButton.setText(R.string.lock);
 	m_albumLockButton.setOnClickListener(new View.OnClickListener() {
 		public void onClick(View v) {
-		    if (m_albumLockButton.getText().equals("Lock")) {
+		    if (m_albumLockButton.getText().equals(R.string.lock)) {
 			m_engine.setClamp(null, m_engine.getSong().bandName(), 
 					  m_engine.getSong().albumName());
-			m_bandLockButton.setText("Lock");
-			m_albumLockButton.setText("Unlock");
+			m_bandLockButton.setText(R.string.lock);
+			m_albumLockButton.setText(R.string.unlock);
 		    } else {
 			m_engine.setClamp(null, null, null);
-			m_bandLockButton.setText("Lock");
-			m_albumLockButton.setText("Lock");
+			m_bandLockButton.setText(R.string.lock);
+			m_albumLockButton.setText(R.string.lock);
 		    }
 		}
 	    });
 	
 
 	m_shuffleButton = (Button) findViewById(R.id.shuffleButton);
-	m_shuffleButton.setText("Start Sequential Play");
+	m_shuffleButton.setText(R.string.sequential);
 	m_shuffleButton.setOnClickListener(new View.OnClickListener() {
 		public void onClick(View v) {
 		    m_engine.toggleRandom();
 		    if (m_engine.isRandom()) {
-			m_shuffleButton.setText("Start Sequential Play");
+			m_shuffleButton.setText(R.string.sequential);
 		    } else {
-			m_shuffleButton.setText("Start Random Play");
+			m_shuffleButton.setText(R.string.random);
 		    }
 		}
 	    });

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AndroidUI</string>
+    <string name="app_name">The Playa</string>
+    <string name="lock">Lock</string>
+    <string name="unlock">Unlock</string>
+    <string name="pause">Pause</string>
+    <string name="play">Play</string>
+    <string name="sequential">Start Sequential Play</string>
+    <string name="random">Start Random Play</string>
 </resources>
