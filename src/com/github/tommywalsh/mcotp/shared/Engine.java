@@ -48,6 +48,10 @@ public class Engine
 	m_provider.toggleRandom();
     }
 
+    public boolean isRandom() {
+	return m_provider.isRandom();
+    }
+
     public void setClamp(String genreClamp, String bandClamp, String albumClamp) {
 	if (albumClamp != null) {
 	    assert bandClamp != null;

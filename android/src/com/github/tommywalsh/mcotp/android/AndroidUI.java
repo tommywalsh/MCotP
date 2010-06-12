@@ -19,6 +19,7 @@ public class AndroidUI extends Activity
     private Button m_playPauseButton;
     private Button m_bandLockButton;
     private Button m_albumLockButton;
+    private Button m_shuffleButton;
     private Engine m_engine;
 
     /** Called when the activity is first created. */
@@ -87,6 +88,20 @@ public class AndroidUI extends Activity
 			m_engine.setClamp(null, null, null);
 			m_bandLockButton.setText("Lock");
 			m_albumLockButton.setText("Lock");
+		    }
+		}
+	    });
+	
+
+	m_shuffleButton = (Button) findViewById(R.id.shuffleButton);
+	m_shuffleButton.setText("Start Sequential Play");
+	m_shuffleButton.setOnClickListener(new View.OnClickListener() {
+		public void onClick(View v) {
+		    m_engine.toggleRandom();
+		    if (m_engine.isRandom()) {
+			m_shuffleButton.setText("Start Sequential Play");
+		    } else {
+			m_shuffleButton.setText("Start Random Play");
 		    }
 		}
 	    });

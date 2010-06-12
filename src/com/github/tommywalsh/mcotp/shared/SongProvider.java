@@ -43,6 +43,10 @@ public class SongProvider
 	m_isRandom = !m_isRandom;
     }
 
+    public boolean isRandom() {
+	return m_isRandom;
+    }
+
     // The "clamp" functions specify the "boundaries" of available songs.
     // These are currently unimplemented.  In future, this might be
     // expanded to allow arbitrary filters 
