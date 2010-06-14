@@ -97,7 +97,7 @@ public class Engine
     public void restartSong() {
 	m_player.restartSong();
     }
-
+   
     public void nextSong() {
 	m_provider.advanceSong();
 	Song song = m_provider.getCurrentSong();

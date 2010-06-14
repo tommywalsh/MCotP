@@ -22,8 +22,8 @@ public class AndroidUI extends Activity
     private Button m_shuffleButton;
     private Engine m_engine;
 
-    private boolean m_albumLocked;
-    private boolean m_bandLocked;
+    private boolean m_albumLocked = false;
+    private boolean m_bandLocked = false;
 
     /** Called when the activity is first created. */
     @Override
@@ -71,6 +71,7 @@ public class AndroidUI extends Activity
 			m_bandLockButton.setText(R.string.lock);
 			m_albumLockButton.setText(R.string.lock);
 			m_bandLocked = false;
+			m_albumLocked = false;
 		    } else {
 			m_engine.setClamp(null, m_engine.getSong().bandName(), null);
 			m_bandLockButton.setText(R.string.unlock);
@@ -90,6 +91,7 @@ public class AndroidUI extends Activity
 			m_bandLockButton.setText(R.string.lock);
 			m_albumLockButton.setText(R.string.lock);
 			m_albumLocked = false;
+			m_bandLocked = false;
 		    } else {
 			m_engine.setClamp(null, m_engine.getSong().bandName(), 
 					  m_engine.getSong().albumName());

@@ -354,7 +354,7 @@ public class SongProvider
 	    advanceToNextAlbumSong();
 	} else if (m_currentAlbum != null && m_currentSongNumber < m_currentAlbum.lastSong()) {
 	    advanceToNextAlbumSong();
-	} else if (m_bandClamp != "") {
+	} else if (m_bandClamp != null && m_bandClamp != "") {
 	    // Might wrap to beginning of band
 	    advanceToNextBandSong();
 	} else if (m_currentSongNumber < m_currentBand.lastSong()) {
@@ -367,7 +367,6 @@ public class SongProvider
 	    }
 	    advanceToSpecificSong(targetSong);
 	}
-
     }
 
     Random m_random = new Random();
