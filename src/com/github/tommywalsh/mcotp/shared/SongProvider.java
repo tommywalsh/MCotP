@@ -4,6 +4,8 @@ import java.util.Vector;
 import java.util.TreeMap;
 import java.util.SortedMap;
 import java.util.Random;
+import java.io.Serializable;
+
 /////////////////////////////////////////////////////////////////////
 //
 // This class is in charge of sequencing songs and providing them
@@ -18,7 +20,7 @@ import java.util.Random;
 //
 
 
-public class SongProvider
+public class SongProvider implements Serializable
 {
     // The next two functions give an iterator-like interface
     // and allow the engine to easily cycle over all applicable songs
@@ -77,7 +79,19 @@ public class SongProvider
 	m_storage = sp;
     }
 
+    public void initAfterDeserialization(StorageProvider sp) {
+	m_storage = sp;
+	m_isRandom = false;
+	m_bandClamp = "";
+	m_albumClamp = "";
+	m_currentSong = null;
+	m_currentSongNumber = 0;
+	m_currentBand = null;
+	m_currentAlbum = null;
+	m_random = new Random();
 
+	advanceToSpecificBandSong(m_allBands.elementAt(0), 0);
+    }
 
     ///////// END OF PUBLIC INTERFACE //////////
 
@@ -92,19 +106,19 @@ public class SongProvider
 
 
 
-    private StorageProvider m_storage;
+    transient private StorageProvider m_storage;
     
     private TreeMap<Integer, Integer> m_indexToBand; 
     private Vector<Band> m_allBands;
     private int m_numSongs;
-    private boolean m_isRandom = false;
-    private String m_bandClamp = "";
-    private String m_albumClamp = "";
-    private String m_currentSong;
-    private int m_currentSongNumber;
+    transient private boolean m_isRandom = false;
+    transient private String m_bandClamp = "";
+    transient private String m_albumClamp = "";
+    transient private String m_currentSong;
+    transient private int m_currentSongNumber;
     
-    private Band m_currentBand;
-    private Album m_currentAlbum;
+    transient private Band m_currentBand;
+    transient private Album m_currentAlbum;
 
 
 
@@ -343,7 +357,7 @@ public class SongProvider
 
     }
 
-    Random m_random = new Random();
+    transient Random m_random = new Random();
     private void advanceToRandomSong() {
         int firstValid = 0;
         int numValid = m_numSongs;

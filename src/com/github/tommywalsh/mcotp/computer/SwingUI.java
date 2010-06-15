@@ -10,7 +10,11 @@ import javax.swing.JComponent;
 import javax.swing.BoxLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 public class SwingUI extends JPanel implements ActionListener
 {
@@ -141,8 +145,38 @@ public class SwingUI extends JPanel implements ActionListener
     private static void runGUIApp(String path) {
 
 	PosixStorageProvider psp = new PosixStorageProvider(path);
-	SongProvider sp = new SongProvider(psp);
-	sp.constructLibrary();
+	SongProvider sp = null;
+
+	File f = new File("/home/tom/.mcotp");
+	try {
+	    if (f.canRead()) {
+		FileInputStream fis = new FileInputStream(f);
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		sp = (SongProvider)(ois.readObject());
+		sp.initAfterDeserialization(psp);
+	    }
+
+        // No need to do anything about these exceptions,
+        // just construct the library from scratch
+	} catch (java.io.FileNotFoundException e) {
+	} catch (java.io.IOException e) {
+	} catch (java.lang.ClassNotFoundException e) {
+	}
+
+	if (sp == null) {
+	    sp = new SongProvider(psp);
+	    sp.constructLibrary();
+	    try {
+		f.createNewFile();
+		FileOutputStream fos = new FileOutputStream(f);
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(sp);
+	    } catch (java.io.FileNotFoundException e) {
+	    } catch (java.io.IOException e) {
+	    }
+	}
+	
+
 	SoxPlayer pl = new SoxPlayer(psp);
 	final Engine engine = new Engine(sp, pl);
 

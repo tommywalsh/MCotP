@@ -8,6 +8,11 @@ import java.util.Vector;
 import android.widget.TextView;
 import android.widget.Button;
 import android.view.View;
+import android.content.Context;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 public class AndroidUI extends Activity
 {
@@ -120,9 +125,33 @@ public class AndroidUI extends Activity
     
     private void initializeInternals() {
 	PosixStorageProvider psp = new PosixStorageProvider("/sdcard/music");
-	m_songProvider = new SongProvider(psp);
-	m_songProvider.constructLibrary();
+	m_songProvider = null;
 
+	final String FILENAME = "song_provider";
+	try {
+	    FileInputStream fis = openFileInput(FILENAME);
+	    ObjectInputStream ois = new ObjectInputStream(fis);
+	    m_songProvider = (SongProvider)(ois.readObject());
+	    m_songProvider.initAfterDeserialization(psp);
+	    // No need to do anything about these exceptions,
+	    // just construct the library from scratch
+	} catch (java.io.FileNotFoundException e) {
+	} catch (java.io.IOException e) {
+	} catch (java.lang.ClassNotFoundException e) {
+	}
+	
+	if (m_songProvider == null) {
+	    m_songProvider = new SongProvider(psp);
+	    m_songProvider.constructLibrary();
+	    try {
+		FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(m_songProvider);
+	    } catch (java.io.FileNotFoundException e) {
+	    } catch (java.io.IOException e) {
+	    }
+	}
+	
 	m_player = new AndroidPlayer(psp);
 	m_engine = new Engine(m_songProvider, m_player);
 
