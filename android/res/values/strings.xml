@@ -8,6 +8,9 @@
     <string name="sequential">Start Sequential Play</string>
     <string name="random">Start Random Play</string>
     <string name="toggle">Play/Pause</string>
+    <string name="next">Next Track</string>
+    <string name="repeat">Restart Track</string>
+
 
     <string name="bind_service">Bind Service</string>
     <string name="unbind_service">Unbind Service</string>

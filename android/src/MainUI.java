@@ -34,6 +34,8 @@ public class MainUI extends Activity {
     
     Button mKillButton;
     Button m_toggleButton;
+    Button m_nextButton;
+    Button m_repeatButton;
 
     TextView mCallbackText;
 
@@ -62,6 +64,15 @@ public class MainUI extends Activity {
 	m_toggleButton.setOnClickListener(m_toggleListener);
 	m_toggleButton.setEnabled(false);
 
+	m_nextButton = (Button)findViewById(R.id.next);
+	m_nextButton.setOnClickListener(m_nextListener);
+	m_nextButton.setEnabled(false);
+
+	m_repeatButton = (Button)findViewById(R.id.repeat);
+	m_repeatButton.setOnClickListener(m_repeatListener);
+	m_repeatButton.setEnabled(false);
+
+
         mCallbackText = (TextView)findViewById(R.id.callback);
         mCallbackText.setText("Not attached.");
     }
@@ -80,6 +91,8 @@ public class MainUI extends Activity {
             mEngineService = IEngine.Stub.asInterface(service);
             mKillButton.setEnabled(true);
 	    m_toggleButton.setEnabled(true);
+	    m_nextButton.setEnabled(true);
+	    m_repeatButton.setEnabled(true);
             mCallbackText.setText("Attached.");
 
             // We want to monitor the service for as long as we are
@@ -104,6 +117,8 @@ public class MainUI extends Activity {
             mEngineService = null;
             mKillButton.setEnabled(false);
 	    m_toggleButton.setEnabled(false);
+	    m_nextButton.setEnabled(false);
+	    m_repeatButton.setEnabled(false);
 
             mCallbackText.setText("Disconnected.");
 
@@ -122,12 +137,17 @@ public class MainUI extends Activity {
             mSecondaryService = IProvider.Stub.asInterface(service);
             mKillButton.setEnabled(true);
 	    m_toggleButton.setEnabled(true);
+	    m_nextButton.setEnabled(true);
+	    m_repeatButton.setEnabled(true);
         }
 
         public void onServiceDisconnected(ComponentName className) {
             mSecondaryService = null;
             mKillButton.setEnabled(false);
 	    m_toggleButton.setEnabled(false);
+	    m_nextButton.setEnabled(false);
+	    m_repeatButton.setEnabled(false);
+
         }
     };
 
@@ -165,6 +185,8 @@ public class MainUI extends Activity {
                 unbindService(mSecondaryConnection);
                 mKillButton.setEnabled(false);
 		m_toggleButton.setEnabled(false);
+		m_nextButton.setEnabled(false);
+		m_repeatButton.setEnabled(false);
                 mIsBound = false;
                 mCallbackText.setText("Unbinding.");
             }
@@ -176,6 +198,28 @@ public class MainUI extends Activity {
 		if (mEngineService != null) {
 		    try {
 			mEngineService.togglePlayPause();
+		    } catch (RemoteException ex) {
+			// server process died.. will clean up if necessary in disconnect code
+		    }
+		}
+	    }
+	};
+    private OnClickListener m_nextListener = new OnClickListener() {
+	    public void onClick(View v) {
+		if (mEngineService != null) {
+		    try {
+			mEngineService.skipToNextTrack();
+		    } catch (RemoteException ex) {
+			// server process died.. will clean up if necessary in disconnect code
+		    }
+		}
+	    }
+	};
+    private OnClickListener m_repeatListener = new OnClickListener() {
+	    public void onClick(View v) {
+		if (mEngineService != null) {
+		    try {
+			mEngineService.repeatCurrentTrack();
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
@@ -229,9 +273,10 @@ public class MainUI extends Activity {
          * NOT be running in our main thread like most other things -- so,
          * to update the UI, we need to use a Handler to hop over there.
          */
-	    public void playModeChanged(boolean isPlaying) {
+	    public void engineChanged(boolean isPlaying, int trackNum) {
 		int value = isPlaying ? 1 : 0;
 		mHandler.sendMessage(mHandler.obtainMessage(BUMP_MSG, value, 0));
+		mHandler.sendMessage(mHandler.obtainMessage(BUMP_MSG, trackNum, 0));
 	    }
     };
     

@@ -17,4 +17,6 @@ interface IEngine {
     void unregisterCallback(IStatusCallback cb);
 
     void togglePlayPause();
+    void skipToNextTrack();
+    void repeatCurrentTrack();
 }

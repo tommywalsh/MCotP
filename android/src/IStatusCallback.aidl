@@ -11,5 +11,5 @@ package com.github.tommywalsh.mcotp;
 
 // updates from the backend (e.g. to update UI)
 oneway interface IStatusCallback {
-    void playModeChanged(boolean isPlaying);
+    void engineChanged(boolean isPlaying, int trackNum);
 }

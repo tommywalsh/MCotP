@@ -34,6 +34,7 @@ public class Backend extends Service {
     
     NotificationManager mNM;
     boolean m_isPlaying = false;
+    int m_trackNum = 1;
     
     @Override
     public void onCreate() {
@@ -80,6 +81,12 @@ public class Backend extends Service {
 	    public void togglePlayPause() {
 		mHandler.sendEmptyMessage(TOGGLE_PLAY_PAUSE_MSG);
 	    }
+	    public void repeatCurrentTrack() {
+		mHandler.sendEmptyMessage(REPEAT_TRACK_MSG);
+	    }
+	    public void skipToNextTrack() {
+		mHandler.sendEmptyMessage(NEXT_TRACK_MSG);
+	    }
 
 	};
 
@@ -93,32 +100,43 @@ public class Backend extends Service {
         }
     };
 
-    
-    private static final int TOGGLE_PLAY_PAUSE_MSG = 2;
+    private static final int NEXT_TRACK_MSG = 1;
+    private static final int REPEAT_TRACK_MSG = 2;
+    private static final int TOGGLE_PLAY_PAUSE_MSG = 3;
 
     /**
      * Our Handler used to execute operations on the main thread.  This is used
      * to schedule increments of our value.
      */
     private final Handler mHandler = new Handler() {
-        @Override public void handleMessage(Message msg) {
-            switch (msg.what) {
-
-	    case TOGGLE_PLAY_PAUSE_MSG:
-		{
-		    m_isPlaying = !m_isPlaying;
-		    final int N = mCallbacks.beginBroadcast();
-		    for (int i=0; i<N; i++) {
-			try {
-			    mCallbacks.getBroadcastItem(i).playModeChanged(m_isPlaying);
-			} catch (RemoteException e) {
-			    // The RemoteCallbackList will take care of removing
-			    // the dead object for us.
-			}
+	    private void notifyChange() {
+		final int N = mCallbacks.beginBroadcast();
+		for (int i=0; i<N; i++) {
+		    try {
+			mCallbacks.getBroadcastItem(i).engineChanged(m_isPlaying, m_trackNum);
+		    } catch (RemoteException e) {
+			// The RemoteCallbackList will take care of removing
+			// the dead object for us.
 		    }
-		    mCallbacks.finishBroadcast();
-		    break;
 		}
+		mCallbacks.finishBroadcast();
+	    }
+
+	    @Override public void handleMessage(Message msg) {
+		switch (msg.what) {
+		    
+		case NEXT_TRACK_MSG:
+		    m_trackNum = m_trackNum + 1;
+		    notifyChange();
+		    break;
+		case REPEAT_TRACK_MSG:
+		    // nothing to do until engine really hooked up
+		    break;
+
+		case TOGGLE_PLAY_PAUSE_MSG:
+		    m_isPlaying = !m_isPlaying;
+		    notifyChange();
+		    break;
 
                 default:
                     super.handleMessage(msg);
