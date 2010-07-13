@@ -26,17 +26,14 @@ There will be three parts:
    include a UI, and audio and SDCard adapters.
 
 
+To build app for computer
+$ ant computer
 
-To build everything:
-$ ant build
-or just
-$ ant
-
-To build only shared components:
-$ ant shared
-
-To run on a computer:
+To run app for computer
 $ MCOTP=/path/to/library ant run
 
-To install on a connected Android device
-$ ant android.install
+To build app for phone
+$ ant android
+
+To install app on phone
+$ and android.install

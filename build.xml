@@ -1,16 +1,5 @@
 <project default="build">
 
-<!-- GENERIC TARGETS -->
-  <target name="clean" depends="shared.clean,computer.clean,android.clean">
-    <delete dir="bin" />
-  </target>
-
-  <target name="compile" depends="shared.compile,computer.compile,android.compile" />
-    
-  <target name="jar" depends="shared.jar,computer.jar" />
-
-  <target name="build" depends="jar,android.build" />
-
   <target name="run" depends="computer.jar">
     <property environment="env" />
     <java jar="bin/mcotp-computer.jar"
@@ -19,97 +8,62 @@
       <arg value="${env.MCOTP}" />
     </java>
   </target>
-<!-- END OF GENERIC TARGETS -->
-
-
-
-
-<!-- TARGETS FOR SHARED CODE -->
-
-  <target name="shared.clean">
-    <delete dir="bin/classes/shared" />
-    <delete file="bin/mcotp-shared.jar" />
-  </target>
-
-  <target name="shared.compile">
-    <mkdir dir="bin/classes/shared" />
-    <javac srcdir="src/com/github/tommywalsh/mcotp/shared" destdir="bin/classes/shared" />
-  </target>
-
-  <target name="shared.jar" depends="shared.compile">
-    <mkdir dir="bin" />
-    <jar destfile="bin/mcotp-shared.jar" 
-	 basedir="bin/classes/shared" />
-  </target>
-
-  <target name="shared" depends="shared.jar" />
-
-<!-- END OF SHARED TARGETS -->
-
-
-<!-- TARGETS FOR COMPUTER CODE -->
-
   
-  <target name="computer.clean">
-    <delete dir="bin/classes/computer" />
-    <delete file="bin/mcotp-computer.jar" />
+  <target name="clean">
+    <delete dir="build" />
+    <delete dir="bin" />
   </target>
 
-  
-  <target name="computer.compile" depends="shared.jar">
-    <mkdir dir="bin/classes/computer" />
-    <javac 
-           srcdir="src/com/github/tommywalsh/mcotp/computer" 
-	   destdir="bin/classes/computer" 
-	   classpath="bin/mcotp-shared.jar" />
+  <target name="computer.compile">
+    <mkdir dir="build/computer/classes" />
+    <javac srcdir="shared/src"
+	   destdir="build/computer/classes" />
+    <javac srcdir="computer/src"
+	   destdir="build/computer/classes" 
+	   classpath="build/computer/classes" />
   </target>
 
-  <target name="computer.jar" depends="computer.compile,shared.jar">
+  <target name="computer.jar" depends="computer.compile">
     <mkdir dir="bin" />
     <jar destfile="bin/mcotp-computer.jar" 
-	 basedir="bin/classes/computer">
+	 basedir="build/computer/classes">
       <manifest>
 	<attribute name="Main-Class" value="com.github.tommywalsh.mcotp.computer.SwingUI" />
-	<attribute name="Class-Path" value="mcotp-shared.jar" />
       </manifest> 
     </jar>
   </target>
 
   <target name="computer" depends="computer.jar" />
-<!-- END OF COMPUTER TARGETS -->
 
-  
-<!-- ANDROID TARGETS -->
+
   <target name="android.prep">
-    <copy todir="android-build">
-      <fileset dir="android" />
+    <copy todir="build/android" file="android/AndroidManifest.xml" />
+    <copy todir="build/android" file="android/default.properties" />
+    <copy todir="build/android/src/com/github/tommywalsh/mcotp">
+      <fileset dir="shared/src" />
     </copy>
-    <copy todir="android-build/src/com/github/tommywalsh/mcotp/shared">
-      <fileset dir="src/com/github/tommywalsh/mcotp/shared" />
+    <copy todir="build/android/src/com/github/tommywalsh/mcotp">
+      <fileset dir="android/src" />
     </copy>
+    <copy todir="build/android/res">
+      <fileset dir="android/res" />
+    </copy>
+    <exec executable="android">
+      <arg value="update" />
+      <arg value="project" />
+      <arg value="-p" />
+      <arg value="build/android" />
+    </exec>
   </target>
 
-  <target name="android.clean">
-    <delete dir="android-build/src" />
-    <delete dir="android-build/res" />
-    <delete file="android-build/AndroidManifest.xml" />
-    <delete file="android-build/build.properties" />
-    <delete file="android-build/build.xml" />
-  </target>
-
-  <target name="android.compile" depends="android.prep">
-    <ant dir="android-build" target="compile" />
-  </target>
-
-  <target name="android.build" depends="android.compile">
-    <ant dir="android-build" target="debug" />
+  <target name="android.build" depends="android.prep">
+    <ant dir="build/android" target="debug" />
   </target>
 
   <target name="android.install" depends="android.build">
-    <ant dir="android-build" target="install" />
+    <ant dir="build/android" target="install" />
   </target>
 
   <target name="android" depends="android.build" />
-<!-- END OF ANDROID TARGETS -->
 
 </project>
