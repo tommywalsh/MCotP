@@ -4,6 +4,8 @@ import java.util.Vector;
 import java.util.TreeMap;
 import java.util.SortedMap;
 import java.util.Random;
+import java.io.Serializable;
+
 /////////////////////////////////////////////////////////////////////
 //
 // This class is in charge of sequencing songs and providing them
@@ -18,16 +20,16 @@ import java.util.Random;
 //
 
 
-public class SongProvider
+public class SongProvider implements Serializable
 {
     // The next two functions give an iterator-like interface
     // and allow the engine to easily cycle over all applicable songs
     public Song getCurrentSong() {
 	String albumName = null;
 	if (m_currentAlbum != null) {
-	    albumName = m_currentAlbum.name;
+	    albumName = m_currentAlbum.name();
 	}
-	return new Song(m_currentBand.name, albumName, m_currentSong);
+	return new Song(m_currentBand.name(), albumName, m_currentSong);
     }
 
     public void advanceSong() {
@@ -77,7 +79,19 @@ public class SongProvider
 	m_storage = sp;
     }
 
+    public void initAfterDeserialization(StorageProvider sp) {
+	m_storage = sp;
+	m_isRandom = false;
+	m_bandClamp = "";
+	m_albumClamp = "";
+	m_currentSong = null;
+	m_currentSongNumber = 0;
+	m_currentBand = null;
+	m_currentAlbum = null;
+	m_random = new Random();
 
+	advanceToSpecificBandSong(m_allBands.elementAt(0), 0);
+    }
 
     ///////// END OF PUBLIC INTERFACE //////////
 
@@ -92,20 +106,19 @@ public class SongProvider
 
 
 
-    private StorageProvider m_storage;
+    transient private StorageProvider m_storage;
     
-    // might be better to store indicies in tree, instead of bandinfos
     private TreeMap<Integer, Integer> m_indexToBand; 
-    private Vector<BandInfo> m_allBands;
+    private Vector<Band> m_allBands;
     private int m_numSongs;
-    private boolean m_isRandom = false;
-    private String m_bandClamp = "";
-    private String m_albumClamp = "";
-    private String m_currentSong;
-    private int m_currentSongNumber;
+    transient private boolean m_isRandom = false;
+    transient private String m_bandClamp = "";
+    transient private String m_albumClamp = "";
+    transient private String m_currentSong;
+    transient private int m_currentSongNumber;
     
-    private BandInfo m_currentBand;
-    private AlbumInfo m_currentAlbum;
+    transient private Band m_currentBand;
+    transient private Album m_currentAlbum;
 
 
 
@@ -152,61 +165,35 @@ public class SongProvider
     ////////////////////////////////////////////////////////////
     // Classes and functions to keep track of music in library
     ////////////////////////////////////////////////////////////
-    private class AlbumInfo {
-	String name;
-	public int firstSong;
-	public int numSongs;
-	public int lastSong() {
-	    return firstSong + numSongs - 1;
-	}
-    }
-
-    private AlbumInfo constructAlbumInfo(String band, String album, int startNum) {
-	Vector<String> allSongs = getAlbumSongs(band, album);
-
-	AlbumInfo info = new AlbumInfo();
-	info.firstSong = startNum;
-	info.numSongs = allSongs.size();
-	info.name = album;
-
-	return info;
+    private Album constructAlbum(String band, String albumName, int startNum) {
+	Vector<String> allSongs = getAlbumSongs(band, albumName);
+	
+	return new Album(albumName, startNum, allSongs.size() );
     }
 
 
     
-    private class BandInfo {
-	String name;
-	public int firstSong;
-	public int numSongs;
-	public Vector<AlbumInfo> albums;
-	public int lastSong() {
-	    return firstSong + numSongs - 1;
-	}
-    }
 
 
 
 
-    private BandInfo constructBandInfo(String band, int startNum) {
-	Vector<String> looseSongs = getLooseSongs(band);
-	Vector<String> albums = getAlbums(band);
+    private Band constructBand(String bandName, int startNum) {
+	Vector<String> looseSongs = getLooseSongs(bandName);
+	Vector<String> albumNames = getAlbums(bandName);
 
-	BandInfo info = new BandInfo();
-	info.name = band;
-	info.firstSong = startNum;
-	info.albums = new Vector<AlbumInfo>();
-
+	Vector<Album> albums = new Vector<Album>();
 	int albumStartNum = startNum + looseSongs.size();
 	int albumSongCount = 0;
-	for (String album : albums) {
-	    AlbumInfo albumInfo = constructAlbumInfo(band, album, albumStartNum);
-	    info.albums.add(albumInfo);
-	    albumSongCount += albumInfo.numSongs;
-	    albumStartNum += albumInfo.numSongs;
+	for (String albumName : albumNames) {
+	    Album album = constructAlbum(bandName, albumName, albumStartNum);
+	    albums.add(album);
+	    albumSongCount += album.numSongs();
+	    albumStartNum += album.numSongs();
 	}
-	info.numSongs = albumSongCount + looseSongs.size();
-	
-	return info;
+	return new Band(bandName,
+			startNum,
+			albumSongCount + looseSongs.size(),
+			albums);
     }
     ////////////////////////////////////////////////////////////
 
@@ -228,15 +215,15 @@ public class SongProvider
     public void constructLibrary()
     {
 	int nextSongNum = 0;
-	m_allBands = new Vector<BandInfo>();
+	m_allBands = new Vector<Band>();
 	m_indexToBand = new TreeMap<Integer, Integer>();
 
 	int i = 0;
-	for (String band : getAllBands()) {
-	    BandInfo info = constructBandInfo(band, nextSongNum);
-	    nextSongNum += info.numSongs;
-	    m_allBands.add(info);
-	    m_indexToBand.put((Integer)(info.firstSong), i);
+	for (String bandName : getAllBands()) {
+	    Band band = constructBand(bandName, nextSongNum);
+	    nextSongNum += band.numSongs();
+	    m_allBands.add(band);
+	    m_indexToBand.put((Integer)(band.firstSong()), i);
 	    ++i;
 	}
 	m_numSongs = nextSongNum;
@@ -254,52 +241,52 @@ public class SongProvider
     // There's a few levels, with the more general ones redirecting to the
     // more specific ones, depending on the situation
     /////////////////////////////////////////////////////////////////////
-    private void advanceToSpecificAlbumSong(BandInfo bi, AlbumInfo ai, int songNum) {
-	assert (ai != null);
-	assert ( (songNum >= ai.firstSong) &&
-		 (songNum <= ai.lastSong()));
+    private void advanceToSpecificAlbumSong(Band band, Album album, int songNum) {
+	assert (album != null);
+	assert ( (songNum >= album.firstSong()) &&
+		 (songNum <= album.lastSong()));
 
-	Vector<String> albumSongs = getAlbumSongs(bi.name, ai.name);	
+	Vector<String> albumSongs = getAlbumSongs(band.name(), album.name());
 	m_currentSongNumber = songNum;
-	m_currentSong = albumSongs.elementAt(songNum - ai.firstSong);	
-	m_currentAlbum = ai;
-	m_currentBand = bi;
+	m_currentSong = albumSongs.elementAt(songNum - album.firstSong());
+	m_currentAlbum = album;
+	m_currentBand = band;
     }
 
     private void advanceToNextAlbumSong() {
-	AlbumInfo ai = m_currentAlbum;
-	assert (ai != null);
+	Album album = m_currentAlbum;
+	assert (album != null);
 
 	int songNum = m_currentSongNumber;
 	++songNum;
-	if (songNum > ai.lastSong()) {
-	    songNum = ai.firstSong;
+	if (songNum > album.lastSong()) {
+	    songNum = album.firstSong();
 	}
 
-	advanceToSpecificAlbumSong(m_currentBand, ai, songNum);
+	advanceToSpecificAlbumSong(m_currentBand, album, songNum);
     }
 
-    private void advanceToSpecificLooseSong(BandInfo bi, int songNum) 
+    private void advanceToSpecificLooseSong(Band band, int songNum) 
     {
-	int index = songNum - bi.firstSong;
+	int index = songNum - band.firstSong();
 	assert index >= 0;
-	Vector<String> looseSongs = getLooseSongs(bi.name);
+	Vector<String> looseSongs = getLooseSongs(band.name());
 	assert index < looseSongs.size();
 	m_currentSongNumber = songNum;
 	m_currentSong = looseSongs.elementAt(index);
-	m_currentBand = bi;
+	m_currentBand = band;
 	m_currentAlbum = null;
 
     }
 
-    private void advanceToSpecificBandSong(BandInfo bi, int songNum) {
-	assert bi != null;
-	assert songNum >= bi.firstSong;
-	assert songNum <= bi.lastSong();
+    private void advanceToSpecificBandSong(Band band, int songNum) {
+	assert band != null;
+	assert songNum >= band.firstSong();
+	assert songNum <= band.lastSong();
 
-	Vector<AlbumInfo> albums = bi.albums;
-	if (albums.size() == 0 || songNum < albums.elementAt(0).firstSong) {
-	    advanceToSpecificLooseSong(bi, songNum);
+	Vector<Album> albums = band.albums();
+	if (albums.size() == 0 || songNum < albums.elementAt(0).firstSong()) {
+	    advanceToSpecificLooseSong(band, songNum);
 	} else {
 	    // Might be slightly better to do a binary search here
 	    // (or maybe not... there will be a lot of cases with a
@@ -308,21 +295,21 @@ public class SongProvider
 	    while(songNum > albums.elementAt(i).lastSong()) {
 		++i;
 	    }
-	    advanceToSpecificAlbumSong(bi, albums.elementAt(i), songNum);
+	    advanceToSpecificAlbumSong(band, albums.elementAt(i), songNum);
 	}	    	    
     }
 
     private void advanceToNextBandSong() {
-	BandInfo bi = m_currentBand;
-	assert bi != null;
-	assert m_currentSongNumber >= bi.firstSong;
+	Band band = m_currentBand;
+	assert band != null;
+	assert m_currentSongNumber >= band.firstSong();
 
 	int songNum = m_currentSongNumber+1;
-	if (songNum > bi.lastSong()) {
-	    songNum = bi.firstSong;
+	if (songNum > band.lastSong()) {
+	    songNum = band.firstSong();
 	}
 
-	advanceToSpecificBandSong(bi, songNum);
+	advanceToSpecificBandSong(band, songNum);
     }
 
     private void advanceToSpecificSong(int songNum) {
@@ -344,8 +331,8 @@ public class SongProvider
 	    index = headMap.get(headMap.lastKey());
 	}
 	
-	BandInfo bi = m_allBands.elementAt(index);
-	advanceToSpecificBandSong(bi, songNum);
+	Band band = m_allBands.elementAt(index);
+	advanceToSpecificBandSong(band, songNum);
     }
 
     private void advanceToNextLinearSong() {
@@ -369,20 +356,20 @@ public class SongProvider
 	}
     }
 
-    Random m_random = new Random();
+    transient Random m_random = new Random();
     private void advanceToRandomSong() {
         int firstValid = 0;
         int numValid = m_numSongs;
         if (m_albumClamp != null && m_albumClamp != "") {
-            AlbumInfo ai = m_currentAlbum;
-            assert (ai.name.equals(m_albumClamp));  // implement random clamping later
-            firstValid = ai.firstSong;
-            numValid = ai.numSongs;
+            Album album = m_currentAlbum;
+            assert (album.name().equals(m_albumClamp));  // implement random clamping later
+            firstValid = album.firstSong();
+            numValid = album.numSongs();
         } else if (m_bandClamp != "") {
-            BandInfo bi = m_currentBand;
-            assert (bi.name.equals(m_bandClamp));  // implement random clamping later
-            firstValid = bi.firstSong;
-            numValid = bi.numSongs;
+            Band band = m_currentBand;
+            assert (band.name().equals(m_bandClamp));  // implement random clamping later
+            firstValid = band.firstSong();
+            numValid = band.numSongs();
         }
 
 	advanceToSpecificSong(firstValid + m_random.nextInt(numValid));
