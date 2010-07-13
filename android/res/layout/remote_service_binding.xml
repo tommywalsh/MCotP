@@ -43,9 +43,9 @@
         android:text="@string/kill_process">
     </Button>
     
-    <Button android:id="@+id/seven"
+    <Button android:id="@+id/toggle"
         android:layout_width="wrap_content" android:layout_height="wrap_content" 
-        android:text="@string/get_seven">
+        android:text="@string/toggle">
     </Button>
     
     <TextView android:id="@+id/callback"

@@ -7,6 +7,7 @@
     <string name="play">Play</string>
     <string name="sequential">Start Sequential Play</string>
     <string name="random">Start Random Play</string>
+    <string name="toggle">Play/Pause</string>
 
     <string name="bind_service">Bind Service</string>
     <string name="unbind_service">Unbind Service</string>
@@ -21,7 +22,6 @@
         service running in another process.  Use the kill button to see what happens when
         the process crashes.</string>
     <string name="kill_process">Kill Process</string>
-    <string name="get_seven">Get Seven</string>
     <string name="remote_service_connected">Connected to remote service</string>
     <string name="remote_service_disconnected">Disconnected from remote service</string>
     <string name="remote_call_failed">Failure calling remote service</string>

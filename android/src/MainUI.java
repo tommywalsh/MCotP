@@ -29,11 +29,12 @@ import android.widget.Toast;
 
 
 public class MainUI extends Activity {
-    IEngine mService = null;
+    IEngine mEngineService = null;
     IProvider mSecondaryService = null;
     
     Button mKillButton;
-    Button mSevenButton;
+    Button m_toggleButton;
+
     TextView mCallbackText;
 
     private boolean mIsBound;
@@ -57,9 +58,9 @@ public class MainUI extends Activity {
         mKillButton.setOnClickListener(mKillListener);
         mKillButton.setEnabled(false);
         
-	mSevenButton = (Button)findViewById(R.id.seven);
-	mSevenButton.setOnClickListener(mSevenListener);
-	mSevenButton.setEnabled(false);
+	m_toggleButton = (Button)findViewById(R.id.toggle);
+	m_toggleButton.setOnClickListener(m_toggleListener);
+	m_toggleButton.setEnabled(false);
 
         mCallbackText = (TextView)findViewById(R.id.callback);
         mCallbackText.setText("Not attached.");
@@ -76,15 +77,15 @@ public class MainUI extends Activity {
             // interact with the service.  We are communicating with our
             // service through an IDL interface, so get a client-side
             // representation of that from the raw service object.
-            mService = IEngine.Stub.asInterface(service);
+            mEngineService = IEngine.Stub.asInterface(service);
             mKillButton.setEnabled(true);
-	    mSevenButton.setEnabled(true);
+	    m_toggleButton.setEnabled(true);
             mCallbackText.setText("Attached.");
 
             // We want to monitor the service for as long as we are
             // connected to it.
             try {
-                mService.registerCallback(mCallback);
+                mEngineService.registerCallback(mCallback);
             } catch (RemoteException e) {
                 // In this case the service has crashed before we could even
                 // do anything with it; we can count on soon being
@@ -100,9 +101,10 @@ public class MainUI extends Activity {
         public void onServiceDisconnected(ComponentName className) {
             // This is called when the connection with the service has been
             // unexpectedly disconnected -- that is, its process crashed.
-            mService = null;
+            mEngineService = null;
             mKillButton.setEnabled(false);
-	    mSevenButton.setEnabled(false);
+	    m_toggleButton.setEnabled(false);
+
             mCallbackText.setText("Disconnected.");
 
             // As part of the sample, tell the user what happened.
@@ -119,13 +121,13 @@ public class MainUI extends Activity {
             // other interface.
             mSecondaryService = IProvider.Stub.asInterface(service);
             mKillButton.setEnabled(true);
-	    mSevenButton.setEnabled(true);
+	    m_toggleButton.setEnabled(true);
         }
 
         public void onServiceDisconnected(ComponentName className) {
             mSecondaryService = null;
             mKillButton.setEnabled(false);
-	    mSevenButton.setEnabled(false);
+	    m_toggleButton.setEnabled(false);
         }
     };
 
@@ -149,9 +151,9 @@ public class MainUI extends Activity {
             if (mIsBound) {
                 // If we have received the service, and hence registered with
                 // it, then now is the time to unregister.
-                if (mService != null) {
+                if (mEngineService != null) {
                     try {
-                        mService.unregisterCallback(mCallback);
+                        mEngineService.unregisterCallback(mCallback);
                     } catch (RemoteException e) {
                         // There is nothing special we need to do if the service
                         // has crashed.
@@ -162,34 +164,20 @@ public class MainUI extends Activity {
                 unbindService(mConnection);
                 unbindService(mSecondaryConnection);
                 mKillButton.setEnabled(false);
-		mSevenButton.setEnabled(false);
+		m_toggleButton.setEnabled(false);
                 mIsBound = false;
                 mCallbackText.setText("Unbinding.");
             }
         }
     };
 
-    private OnClickListener mSevenListener = new OnClickListener() {
+    private OnClickListener m_toggleListener = new OnClickListener() {
 	    public void onClick(View v) {
-		if (mSecondaryService != null) {
+		if (mEngineService != null) {
 		    try {
-			int num = mSecondaryService.getSeven();
-			if (num == 7) {
-			    Toast.makeText(MainUI.this,
-					   "Got seven!",
-					   Toast.LENGTH_SHORT).show();
-			} else {
-			    Toast.makeText(MainUI.this,
-					   "Got another number!",
-					   Toast.LENGTH_SHORT).show();
-			}
+			mEngineService.togglePlayPause();
 		    } catch (RemoteException ex) {
-			// Recover gracefully from the process hosting the
-			// server dying.
-			// Just for purposes of the sample, put up a notification.
-			Toast.makeText(MainUI.this,
-				       R.string.remote_call_failed,
-				       Toast.LENGTH_SHORT).show();
+			// server process died.. will clean up if necessary in disconnect code
 		    }
 		}
 	    }

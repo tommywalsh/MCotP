@@ -13,8 +13,6 @@ package com.github.tommywalsh.mcotp;
 interface IProvider {
     int getPid();
 
-    int getSeven();    
-
     void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,
             double aDouble, String aString);
 }

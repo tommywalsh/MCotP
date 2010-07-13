@@ -11,5 +11,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".Backend" android:process=":remote">
+            <intent-filter>
+                <!-- These are the interfaces supported by the service, which
+                     you can bind to. -->
+                <action android:name="com.github.tommywalsh.mcotp.IEngine" />
+                <action android:name="com.github.tommywalsh.mcotp.IProvider" />
+                <!-- This is an action code you can use to select the service
+                     without explicitly supplying the implementation class. -->
+                <action android:name="com.github.tommywalsh.mcotp.MCOTP_BACKEND" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".MainUI" android:label="@string/activity_mcotp_ui">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
     </application>
 </manifest> 

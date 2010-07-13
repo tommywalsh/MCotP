@@ -15,4 +15,6 @@ import com.github.tommywalsh.mcotp.IStatusCallback;
 interface IEngine {
     void registerCallback(IStatusCallback cb);
     void unregisterCallback(IStatusCallback cb);
+
+    void togglePlayPause();
 }
