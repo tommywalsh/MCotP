@@ -1,6 +1,5 @@
-package com.github.tommywalsh.mcotp.shared;
+package com.github.tommywalsh.mcotp;
 
-import com.github.tommywalsh.mcotp.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 

@@ -1,6 +1,4 @@
-package com.github.tommywalsh.mcotp.android;
-
-import com.github.tommywalsh.mcotp.shared.*;
+package com.github.tommywalsh.mcotp;
 
 import android.app.Activity;
 import android.os.Bundle;

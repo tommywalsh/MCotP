@@ -1,6 +1,5 @@
-package com.github.tommywalsh.mcotp.android;
+package com.github.tommywalsh.mcotp;
 
-import com.github.tommywalsh.mcotp.shared.*;
 import android.media.MediaPlayer;
 import java.util.HashSet;
 import java.util.Iterator;

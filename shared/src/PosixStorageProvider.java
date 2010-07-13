@@ -1,4 +1,4 @@
-package com.github.tommywalsh.mcotp.shared;
+package com.github.tommywalsh.mcotp;
 
 
 import java.io.File;
