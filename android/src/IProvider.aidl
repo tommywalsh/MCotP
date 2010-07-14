@@ -11,6 +11,11 @@ package com.github.tommywalsh.mcotp;
 
 // Interface to the music provider (lock on band, random play, etc)
 interface IProvider {
+    
+    void toggleBandLocking();
+    void toggleAlbumLocking();
+    void toggleShuffling();
+
     int getPid();
 
     void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,

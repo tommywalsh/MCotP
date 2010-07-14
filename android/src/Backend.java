@@ -34,7 +34,13 @@ public class Backend extends Service {
     
     NotificationManager mNM;
     boolean m_isPlaying = false;
-    int m_trackNum = 1;
+    // following should be in a song structure, probably
+    String m_bandName = "foo";
+    String m_albumName = "bar";
+    String m_trackName = "foo bar";
+    boolean m_bandLocked = false;
+    boolean m_albumLocked = false;
+    boolean m_shuffling = false;
     
     @Override
     public void onCreate() {
@@ -73,7 +79,10 @@ public class Backend extends Service {
 
     private final IEngine.Stub mBinder = new IEngine.Stub() {
 	    public void registerCallback(IStatusCallback cb) {
-		if (cb != null) mCallbacks.register(cb);
+		if (cb != null) {
+		    mCallbacks.register(cb);
+		    notifyChange(true, true);
+		}
 	    }
 	    public void unregisterCallback(IStatusCallback cb) {
 		if (cb != null) mCallbacks.unregister(cb);
@@ -91,6 +100,17 @@ public class Backend extends Service {
 	};
 
     private final IProvider.Stub mSecondaryBinder = new IProvider.Stub() {
+
+	    public void toggleBandLocking() {
+		mHandler.sendEmptyMessage(TOGGLE_BAND_LOCKING_MSG);
+	    }
+	    public void toggleAlbumLocking() {
+		mHandler.sendEmptyMessage(TOGGLE_ALBUM_LOCKING_MSG);
+	    }
+	    public void toggleShuffling() {
+		mHandler.sendEmptyMessage(TOGGLE_SHUFFLING_MSG);
+	    }
+
         public int getPid() {
             return Process.myPid();
         }
@@ -104,16 +124,26 @@ public class Backend extends Service {
     private static final int REPEAT_TRACK_MSG = 2;
     private static final int TOGGLE_PLAY_PAUSE_MSG = 3;
 
-    /**
-     * Our Handler used to execute operations on the main thread.  This is used
-     * to schedule increments of our value.
-     */
-    private final Handler mHandler = new Handler() {
-	    private void notifyChange() {
+    private static final int TOGGLE_BAND_LOCKING_MSG = 10;
+    private static final int TOGGLE_ALBUM_LOCKING_MSG = 11;
+    private static final int TOGGLE_SHUFFLING_MSG = 12;
+
+
+	    private void notifyChange(boolean engine, boolean provider) {
 		final int N = mCallbacks.beginBroadcast();
 		for (int i=0; i<N; i++) {
 		    try {
-			mCallbacks.getBroadcastItem(i).engineChanged(m_isPlaying, m_trackNum);
+			if (engine) {
+			    mCallbacks.getBroadcastItem(i).engineChanged(m_isPlaying,
+									 m_bandName,
+									 m_albumName,
+									 m_trackName);
+			}
+			if (provider) {
+			    mCallbacks.getBroadcastItem(i).providerChanged(m_shuffling,
+									   m_bandLocked,
+									   m_albumLocked);
+			}
 		    } catch (RemoteException e) {
 			// The RemoteCallbackList will take care of removing
 			// the dead object for us.
@@ -122,21 +152,35 @@ public class Backend extends Service {
 		mCallbacks.finishBroadcast();
 	    }
 
+
+
+    /**
+     * Our Handler used to execute operations on the main thread.  This is used
+     * to schedule increments of our value.
+     */
+    private final Handler mHandler = new Handler() {
 	    @Override public void handleMessage(Message msg) {
 		switch (msg.what) {
 		    
 		case NEXT_TRACK_MSG:
-		    m_trackNum = m_trackNum + 1;
-		    notifyChange();
+		    notifyChange(true, false);
 		    break;
 		case REPEAT_TRACK_MSG:
 		    // nothing to do until engine really hooked up
 		    break;
-
 		case TOGGLE_PLAY_PAUSE_MSG:
 		    m_isPlaying = !m_isPlaying;
-		    notifyChange();
+		    notifyChange(true, false);
 		    break;
+		case TOGGLE_BAND_LOCKING_MSG:
+		    m_bandLocked = !m_bandLocked;
+		    notifyChange(false, true);
+		case TOGGLE_ALBUM_LOCKING_MSG:
+		    m_albumLocked = !m_albumLocked;
+		    notifyChange(false, true);
+		case TOGGLE_SHUFFLING_MSG:
+		    m_shuffling = !m_shuffling;
+		    notifyChange(false, true);
 
                 default:
                     super.handleMessage(msg);

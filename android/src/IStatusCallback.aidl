@@ -11,5 +11,6 @@ package com.github.tommywalsh.mcotp;
 
 // updates from the backend (e.g. to update UI)
 oneway interface IStatusCallback {
-    void engineChanged(boolean isPlaying, int trackNum);
+    void engineChanged(boolean isPlaying, String bandName, String albumName, String trackName);
+    void providerChanged(boolean isShuffling, boolean isBandLocked, boolean isAlbumLocked);
 }

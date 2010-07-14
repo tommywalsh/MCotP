@@ -261,6 +261,13 @@ public class MainUI extends Activity {
     // Code showing how to deal with callbacks.
     // ----------------------------------------------------------------------
     
+    class EngineInfo {
+	public boolean isPlaying;
+	public String album;
+	public String band;
+	public String track;
+    }
+	    
     /**
      * This implementation is used to receive callbacks from the remote
      * service.
@@ -273,14 +280,24 @@ public class MainUI extends Activity {
          * NOT be running in our main thread like most other things -- so,
          * to update the UI, we need to use a Handler to hop over there.
          */
-	    public void engineChanged(boolean isPlaying, int trackNum) {
-		int value = isPlaying ? 1 : 0;
-		mHandler.sendMessage(mHandler.obtainMessage(BUMP_MSG, value, 0));
-		mHandler.sendMessage(mHandler.obtainMessage(BUMP_MSG, trackNum, 0));
+	    public void engineChanged(boolean isPlaying, String band, String album, String track) {
+		EngineInfo ei = new EngineInfo();
+		ei.isPlaying = isPlaying;
+		ei.band = band;
+		ei.album = album;
+		ei.track = track;
+
+		mHandler.sendMessage(mHandler.obtainMessage(ENGINE_UPDATE, ei));
 	    }
+	    
+	    public void providerChanged(boolean shuffle, boolean bandLock, boolean albumLock)
+	    {
+	    }
+
     };
     
     private static final int BUMP_MSG = 1;
+    private static final int ENGINE_UPDATE = 2;
     
     private Handler mHandler = new Handler() {
         @Override public void handleMessage(Message msg) {
@@ -288,8 +305,14 @@ public class MainUI extends Activity {
                 case BUMP_MSG:
                     mCallbackText.setText("Received from service: " + msg.arg1);
                     break;
-                default:
-                    super.handleMessage(msg);
+	    case ENGINE_UPDATE:
+		EngineInfo ei = (EngineInfo)(msg.obj);
+		m_toggleButton.setText( ei.isPlaying ?
+					R.string.pause :
+					R.string.play );
+		break;
+	    default:
+		super.handleMessage(msg);
             }
         }
         
