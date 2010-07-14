@@ -36,8 +36,13 @@ public class MainUI extends Activity {
     Button m_toggleButton;
     Button m_nextButton;
     Button m_repeatButton;
+    Button m_shuffleButton;
+    Button m_bandLockButton;
+    Button m_albumLockButton;
 
-    TextView mCallbackText;
+    TextView m_bandText;
+    TextView m_albumText;
+    TextView m_trackText;
 
     private boolean mIsBound;
 
@@ -49,7 +54,7 @@ public class MainUI extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.remote_service_binding);
+        setContentView(R.layout.main);
 
         // Watch for button clicks.
         Button button = (Button)findViewById(R.id.bind);
@@ -60,21 +65,26 @@ public class MainUI extends Activity {
         mKillButton.setOnClickListener(mKillListener);
         mKillButton.setEnabled(false);
         
-	m_toggleButton = (Button)findViewById(R.id.toggle);
+	m_toggleButton = (Button)findViewById(R.id.playPauseButton);
 	m_toggleButton.setOnClickListener(m_toggleListener);
 	m_toggleButton.setEnabled(false);
 
-	m_nextButton = (Button)findViewById(R.id.next);
+	m_nextButton = (Button)findViewById(R.id.skipButton);
 	m_nextButton.setOnClickListener(m_nextListener);
 	m_nextButton.setEnabled(false);
 
-	m_repeatButton = (Button)findViewById(R.id.repeat);
+	m_repeatButton = (Button)findViewById(R.id.restartButton);
 	m_repeatButton.setOnClickListener(m_repeatListener);
 	m_repeatButton.setEnabled(false);
 
+	m_bandText = (TextView)findViewById(R.id.bandText);
+	m_albumText = (TextView)findViewById(R.id.albumText);
+	m_trackText = (TextView)findViewById(R.id.songText);
 
-        mCallbackText = (TextView)findViewById(R.id.callback);
-        mCallbackText.setText("Not attached.");
+	m_shuffleButton = (Button)findViewById(R.id.shuffleButton);
+	m_bandLockButton = (Button)findViewById(R.id.bandLockButton);
+	m_albumLockButton = (Button)findViewById(R.id.albumLockButton);
+
     }
 
     /**
@@ -93,7 +103,6 @@ public class MainUI extends Activity {
 	    m_toggleButton.setEnabled(true);
 	    m_nextButton.setEnabled(true);
 	    m_repeatButton.setEnabled(true);
-            mCallbackText.setText("Attached.");
 
             // We want to monitor the service for as long as we are
             // connected to it.
@@ -119,8 +128,6 @@ public class MainUI extends Activity {
 	    m_toggleButton.setEnabled(false);
 	    m_nextButton.setEnabled(false);
 	    m_repeatButton.setEnabled(false);
-
-            mCallbackText.setText("Disconnected.");
 
             // As part of the sample, tell the user what happened.
             Toast.makeText(MainUI.this, R.string.remote_service_disconnected,
@@ -162,7 +169,6 @@ public class MainUI extends Activity {
             bindService(new Intent(IProvider.class.getName()),
                     mSecondaryConnection, Context.BIND_AUTO_CREATE);
             mIsBound = true;
-            mCallbackText.setText("Binding.");
         }
     };
 
@@ -188,7 +194,6 @@ public class MainUI extends Activity {
 		m_nextButton.setEnabled(false);
 		m_repeatButton.setEnabled(false);
                 mIsBound = false;
-                mCallbackText.setText("Unbinding.");
             }
         }
     };
@@ -244,7 +249,6 @@ public class MainUI extends Activity {
                     // sharing a common UID will also be able to kill each
                     // other's processes.
                     Process.killProcess(pid);
-                    mCallbackText.setText("Killed service process.");
                 } catch (RemoteException ex) {
                     // Recover gracefully from the process hosting the
                     // server dying.
@@ -266,6 +270,12 @@ public class MainUI extends Activity {
 	public String album;
 	public String band;
 	public String track;
+    }
+
+    class ProviderInfo {
+	public boolean shuffling;
+	public boolean bandLocked;
+	public boolean albumLocked;
     }
 	    
     /**
@@ -292,25 +302,42 @@ public class MainUI extends Activity {
 	    
 	    public void providerChanged(boolean shuffle, boolean bandLock, boolean albumLock)
 	    {
+		ProviderInfo pi = new ProviderInfo();
+		pi.shuffling = shuffle;
+		pi.bandLocked = bandLock;
+		pi.albumLocked = albumLock;
+
+		mHandler.sendMessage(mHandler.obtainMessage(PROVIDER_UPDATE, pi));
 	    }
 
     };
     
-    private static final int BUMP_MSG = 1;
+    private static final int PROVIDER_UPDATE = 1;
     private static final int ENGINE_UPDATE = 2;
     
     private Handler mHandler = new Handler() {
         @Override public void handleMessage(Message msg) {
             switch (msg.what) {
-                case BUMP_MSG:
-                    mCallbackText.setText("Received from service: " + msg.arg1);
-                    break;
 	    case ENGINE_UPDATE:
 		EngineInfo ei = (EngineInfo)(msg.obj);
 		m_toggleButton.setText( ei.isPlaying ?
 					R.string.pause :
 					R.string.play );
+		m_bandText.setText(ei.band);
+		m_albumText.setText(ei.album);
+		m_trackText.setText(ei.track);
 		break;
+	    case PROVIDER_UPDATE:
+		ProviderInfo pi = (ProviderInfo)(msg.obj);
+		m_shuffleButton.setText(pi.shuffling ?
+					R.string.sequential :
+					R.string.random);
+		m_bandLockButton.setText(pi.bandLocked ?
+					R.string.unlock :
+					R.string.lock);
+		m_albumLockButton.setText(pi.albumLocked ?
+					R.string.unlock :
+					R.string.lock);
 	    default:
 		super.handleMessage(msg);
             }
