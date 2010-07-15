@@ -43,6 +43,7 @@ public class Backend extends Service {
     NotificationManager mNM;
     boolean m_isPlaying = false;
     // following should be in a song structure, probably
+    Song m_song;
     boolean m_bandLocked = false;
     boolean m_albumLocked = false;
     
@@ -168,16 +169,16 @@ public class Backend extends Service {
 	for (int i=0; i<N; i++) {
 	    try {
 		if (engine) {
-		    Song song = m_songProvider.getCurrentSong();
+		    m_song = m_songProvider.getCurrentSong();
 		    mCallbacks.getBroadcastItem(i).engineChanged(m_isPlaying,
-								 song.bandName(),
-								 song.albumName(),
-								 song.songName());
+								 m_song.bandName(),
+								 m_song.albumName(),
+								 m_song.songName());
 		}
 		if (provider) {
 		    mCallbacks.getBroadcastItem(i).providerChanged(m_songProvider.isRandom(),
-								   m_bandLocked,
-								   m_albumLocked);
+								   m_songProvider.isBandClamped(),
+								   m_songProvider.isAlbumClamped());
 		}
 	    } catch (RemoteException e) {
 		// The RemoteCallbackList will take care of removing
@@ -209,10 +210,19 @@ public class Backend extends Service {
 		    notifyChange(true, false);
 		    break;
 		case TOGGLE_BAND_LOCKING_MSG:
-		    m_bandLocked = !m_bandLocked;
+		    if (m_songProvider.isBandClamped()) {
+			m_songProvider.setBandClamp(null);
+		    } else {
+			m_songProvider.setBandClamp(m_song.bandName());
+		    }
 		    notifyChange(false, true);
 		    break;
 		case TOGGLE_ALBUM_LOCKING_MSG:
+		    if (m_songProvider.isAlbumClamped()) {
+			m_songProvider.setAlbumClamp(null, null);
+		    } else {
+			m_songProvider.setAlbumClamp(m_song.bandName(), m_song.albumName());
+		    }
 		    notifyChange(false, true);
 		    break;
 		case TOGGLE_SHUFFLING_MSG:

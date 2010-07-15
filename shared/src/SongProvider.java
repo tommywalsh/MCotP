@@ -75,6 +75,15 @@ public class SongProvider implements Serializable
         m_albumClamp = album;
     }
 
+    public boolean isBandClamped()
+    {
+	return !isAlbumClamped() && (m_bandClamp != null && m_bandClamp != "");
+    }
+    public boolean isAlbumClamped()
+    {
+	return (m_albumClamp != null && m_albumClamp != "");
+    }
+
     public SongProvider(StorageProvider sp) {
 	m_storage = sp;
     }
@@ -365,7 +374,7 @@ public class SongProvider implements Serializable
             assert (album.name().equals(m_albumClamp));  // implement random clamping later
             firstValid = album.firstSong();
             numValid = album.numSongs();
-        } else if (m_bandClamp != "") {
+        } else if (m_bandClamp != null && m_bandClamp != "") {
             Band band = m_currentBand;
             assert (band.name().equals(m_bandClamp));  // implement random clamping later
             firstValid = band.firstSong();
