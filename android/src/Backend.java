@@ -22,11 +22,19 @@ import android.os.Message;
 import android.os.Process;
 import android.os.RemoteCallbackList;
 import android.widget.Toast;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import android.content.Context;
+
 
 import java.util.HashMap;
 
 // Slightly modified copy of the sample RemoteService class
 public class Backend extends Service {
+
+    SongProvider m_songProvider;
 
     // package scoped for easy access from embedded classes
     final RemoteCallbackList<IStatusCallback> mCallbacks
@@ -35,17 +43,43 @@ public class Backend extends Service {
     NotificationManager mNM;
     boolean m_isPlaying = false;
     // following should be in a song structure, probably
-    String m_bandName = "foo";
-    String m_albumName = "bar";
-    String m_trackName = "foo bar";
     boolean m_bandLocked = false;
     boolean m_albumLocked = false;
-    boolean m_shuffling = false;
     
     @Override
     public void onCreate() {
         mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
+
+	PosixStorageProvider psp = new PosixStorageProvider("/sdcard/music");
+	m_songProvider = null;
+	
+	final String FILENAME = "song_provider";
+	try {
+	    FileInputStream fis = openFileInput(FILENAME);
+	    ObjectInputStream ois = new ObjectInputStream(fis);
+	    m_songProvider = (SongProvider)(ois.readObject());
+	    m_songProvider.initAfterDeserialization(psp);
+	    // No need to do anything about these exceptions,
+	    // just construct the library from scratch
+	} catch (java.io.FileNotFoundException e) {
+	} catch (java.io.IOException e) {
+	} catch (java.lang.ClassNotFoundException e) {
+	}
+	
+	if (m_songProvider == null) {
+	    m_songProvider = new SongProvider(psp);
+	    m_songProvider.constructLibrary();
+	    try {
+		FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(m_songProvider);
+	    } catch (java.io.FileNotFoundException e) {
+	    } catch (java.io.IOException e) {
+	    }
+	}
+	
+	
         showNotification();
         
     }
@@ -129,31 +163,32 @@ public class Backend extends Service {
     private static final int TOGGLE_SHUFFLING_MSG = 12;
 
 
-	    private void notifyChange(boolean engine, boolean provider) {
-		final int N = mCallbacks.beginBroadcast();
-		for (int i=0; i<N; i++) {
-		    try {
-			if (engine) {
-			    mCallbacks.getBroadcastItem(i).engineChanged(m_isPlaying,
-									 m_bandName,
-									 m_albumName,
-									 m_trackName);
-			}
-			if (provider) {
-			    mCallbacks.getBroadcastItem(i).providerChanged(m_shuffling,
-									   m_bandLocked,
-									   m_albumLocked);
-			}
-		    } catch (RemoteException e) {
-			// The RemoteCallbackList will take care of removing
-			// the dead object for us.
-		    }
+    private void notifyChange(boolean engine, boolean provider) {
+	final int N = mCallbacks.beginBroadcast();
+	for (int i=0; i<N; i++) {
+	    try {
+		if (engine) {
+		    Song song = m_songProvider.getCurrentSong();
+		    mCallbacks.getBroadcastItem(i).engineChanged(m_isPlaying,
+								 song.bandName(),
+								 song.albumName(),
+								 song.songName());
 		}
-		mCallbacks.finishBroadcast();
+		if (provider) {
+		    mCallbacks.getBroadcastItem(i).providerChanged(m_songProvider.isRandom(),
+								   m_bandLocked,
+								   m_albumLocked);
+		}
+	    } catch (RemoteException e) {
+		// The RemoteCallbackList will take care of removing
+		// the dead object for us.
 	    }
-
-
-
+	}
+	mCallbacks.finishBroadcast();
+    }
+    
+    
+    
     /**
      * Our Handler used to execute operations on the main thread.  This is used
      * to schedule increments of our value.
@@ -163,6 +198,7 @@ public class Backend extends Service {
 		switch (msg.what) {
 		    
 		case NEXT_TRACK_MSG:
+		    m_songProvider.advanceSong();
 		    notifyChange(true, false);
 		    break;
 		case REPEAT_TRACK_MSG:
@@ -177,11 +213,10 @@ public class Backend extends Service {
 		    notifyChange(false, true);
 		    break;
 		case TOGGLE_ALBUM_LOCKING_MSG:
-		    m_albumLocked = !m_albumLocked;
 		    notifyChange(false, true);
 		    break;
 		case TOGGLE_SHUFFLING_MSG:
-		    m_shuffling = !m_shuffling;
+		    m_songProvider.toggleRandom();
 		    notifyChange(false, true);
 		    break;
                 default:
