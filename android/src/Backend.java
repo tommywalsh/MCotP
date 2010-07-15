@@ -175,13 +175,15 @@ public class Backend extends Service {
 		case TOGGLE_BAND_LOCKING_MSG:
 		    m_bandLocked = !m_bandLocked;
 		    notifyChange(false, true);
+		    break;
 		case TOGGLE_ALBUM_LOCKING_MSG:
 		    m_albumLocked = !m_albumLocked;
 		    notifyChange(false, true);
+		    break;
 		case TOGGLE_SHUFFLING_MSG:
 		    m_shuffling = !m_shuffling;
 		    notifyChange(false, true);
-
+		    break;
                 default:
                     super.handleMessage(msg);
             }

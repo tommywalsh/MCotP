@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 public class MainUI extends Activity {
     IEngine mEngineService = null;
-    IProvider mSecondaryService = null;
+    IProvider mProviderService = null;
     
     Button mKillButton;
     Button m_toggleButton;
@@ -82,8 +82,17 @@ public class MainUI extends Activity {
 	m_trackText = (TextView)findViewById(R.id.songText);
 
 	m_shuffleButton = (Button)findViewById(R.id.shuffleButton);
+	m_shuffleButton.setOnClickListener(m_shuffleListener);
+	m_shuffleButton.setEnabled(false);
+
 	m_bandLockButton = (Button)findViewById(R.id.bandLockButton);
+	m_bandLockButton.setOnClickListener(m_bandLockListener);
+	m_bandLockButton.setEnabled(false);
+
 	m_albumLockButton = (Button)findViewById(R.id.albumLockButton);
+	m_albumLockButton.setOnClickListener(m_albumLockListener);
+	m_albumLockButton.setEnabled(false);
+
 
     }
 
@@ -103,6 +112,9 @@ public class MainUI extends Activity {
 	    m_toggleButton.setEnabled(true);
 	    m_nextButton.setEnabled(true);
 	    m_repeatButton.setEnabled(true);
+	    m_shuffleButton.setEnabled(true);
+	    m_bandLockButton.setEnabled(true);
+	    m_albumLockButton.setEnabled(true);
 
             // We want to monitor the service for as long as we are
             // connected to it.
@@ -128,6 +140,9 @@ public class MainUI extends Activity {
 	    m_toggleButton.setEnabled(false);
 	    m_nextButton.setEnabled(false);
 	    m_repeatButton.setEnabled(false);
+	    m_shuffleButton.setEnabled(false);
+	    m_bandLockButton.setEnabled(false);
+	    m_albumLockButton.setEnabled(false);
 
             // As part of the sample, tell the user what happened.
             Toast.makeText(MainUI.this, R.string.remote_service_disconnected,
@@ -136,24 +151,30 @@ public class MainUI extends Activity {
     };
 
 
-    private ServiceConnection mSecondaryConnection = new ServiceConnection() {
+    private ServiceConnection mProviderConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className,
                 IBinder service) {
             // Connecting to a secondary interface is the same as any
             // other interface.
-            mSecondaryService = IProvider.Stub.asInterface(service);
+            mProviderService = IProvider.Stub.asInterface(service);
             mKillButton.setEnabled(true);
 	    m_toggleButton.setEnabled(true);
 	    m_nextButton.setEnabled(true);
 	    m_repeatButton.setEnabled(true);
+	    m_shuffleButton.setEnabled(true);
+	    m_bandLockButton.setEnabled(true);
+	    m_albumLockButton.setEnabled(true);
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            mSecondaryService = null;
+            mProviderService = null;
             mKillButton.setEnabled(false);
 	    m_toggleButton.setEnabled(false);
 	    m_nextButton.setEnabled(false);
 	    m_repeatButton.setEnabled(false);
+	    m_shuffleButton.setEnabled(false);
+	    m_bandLockButton.setEnabled(false);
+	    m_albumLockButton.setEnabled(false);
 
         }
     };
@@ -167,7 +188,7 @@ public class MainUI extends Activity {
             bindService(new Intent(IEngine.class.getName()),
                     mConnection, Context.BIND_AUTO_CREATE);
             bindService(new Intent(IProvider.class.getName()),
-                    mSecondaryConnection, Context.BIND_AUTO_CREATE);
+                    mProviderConnection, Context.BIND_AUTO_CREATE);
             mIsBound = true;
         }
     };
@@ -188,12 +209,15 @@ public class MainUI extends Activity {
                 
                 // Detach our existing connection.
                 unbindService(mConnection);
-                unbindService(mSecondaryConnection);
+                unbindService(mProviderConnection);
                 mKillButton.setEnabled(false);
 		m_toggleButton.setEnabled(false);
 		m_nextButton.setEnabled(false);
-		m_repeatButton.setEnabled(false);
-                mIsBound = false;
+		m_repeatButton.setEnabled(false); 
+		m_shuffleButton.setEnabled(false);
+		m_bandLockButton.setEnabled(false);
+		m_albumLockButton.setEnabled(false);
+		mIsBound = false;
             }
         }
     };
@@ -231,15 +255,48 @@ public class MainUI extends Activity {
 		}
 	    }
 	};
+    private OnClickListener m_shuffleListener = new OnClickListener() {
+	    public void onClick(View v) {
+		if (mProviderService != null) {
+		    try {
+			mProviderService.toggleShuffling();
+		    } catch (RemoteException ex) {
+			// server process died.. will clean up if necessary in disconnect code
+		    }
+		}
+	    }
+	};
+    private OnClickListener m_bandLockListener = new OnClickListener() {
+	    public void onClick(View v) {
+		if (mProviderService != null) {
+		    try {
+			mProviderService.toggleBandLocking();
+		    } catch (RemoteException ex) {
+			// server process died.. will clean up if necessary in disconnect code
+		    }
+		}
+	    }
+	};
+    private OnClickListener m_albumLockListener = new OnClickListener() {
+	    public void onClick(View v) {
+		if (mProviderService != null) {
+		    try {
+			mProviderService.toggleAlbumLocking();
+		    } catch (RemoteException ex) {
+			// server process died.. will clean up if necessary in disconnect code
+		    }
+		}
+	    }
+	};
 
     private OnClickListener mKillListener = new OnClickListener() {
         public void onClick(View v) {
             // To kill the process hosting our service, we need to know its
             // PID.  Conveniently our service has a call that will return
             // to us that information.
-            if (mSecondaryService != null) {
+            if (mProviderService != null) {
                 try {
-                    int pid = mSecondaryService.getPid();
+                    int pid = mProviderService.getPid();
                     // Note that, though this API allows us to request to
                     // kill any process based on its PID, the kernel will
                     // still impose standard restrictions on which PIDs you
