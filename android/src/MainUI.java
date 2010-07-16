@@ -93,7 +93,6 @@ public class MainUI extends Activity {
 	m_albumLockButton.setOnClickListener(m_albumLockListener);
 	m_albumLockButton.setEnabled(false);
 
-
     }
 
     /**

@@ -35,17 +35,15 @@ import java.util.HashMap;
 public class Backend extends Service {
 
     SongProvider m_songProvider;
+    Engine m_engine;
 
     // package scoped for easy access from embedded classes
     final RemoteCallbackList<IStatusCallback> mCallbacks
             = new RemoteCallbackList<IStatusCallback>();
     
     NotificationManager mNM;
-    boolean m_isPlaying = false;
     // following should be in a song structure, probably
     Song m_song;
-    boolean m_bandLocked = false;
-    boolean m_albumLocked = false;
     
     @Override
     public void onCreate() {
@@ -80,7 +78,15 @@ public class Backend extends Service {
 	    }
 	}
 	
-	
+	Player player = new AndroidPlayer(psp);
+	m_engine = new Engine(m_songProvider, player);
+
+	m_engine.addListener(new Engine.UpdateListener() {
+		public void onSongChanged(Song newSong) {
+		    notifyChange(true, false);
+		}
+	    });
+
         showNotification();
         
     }
@@ -169,8 +175,8 @@ public class Backend extends Service {
 	for (int i=0; i<N; i++) {
 	    try {
 		if (engine) {
-		    m_song = m_songProvider.getCurrentSong();
-		    mCallbacks.getBroadcastItem(i).engineChanged(m_isPlaying,
+		    m_song = m_engine.getSong();
+		    mCallbacks.getBroadcastItem(i).engineChanged(m_engine.isPlaying(),
 								 m_song.bandName(),
 								 m_song.albumName(),
 								 m_song.songName());
@@ -199,14 +205,14 @@ public class Backend extends Service {
 		switch (msg.what) {
 		    
 		case NEXT_TRACK_MSG:
-		    m_songProvider.advanceSong();
+		    m_engine.nextSong();
 		    notifyChange(true, false);
 		    break;
 		case REPEAT_TRACK_MSG:
-		    // nothing to do until engine really hooked up
+		    m_engine.restartSong();
 		    break;
 		case TOGGLE_PLAY_PAUSE_MSG:
-		    m_isPlaying = !m_isPlaying;
+		    m_engine.togglePlayPause();
 		    notifyChange(true, false);
 		    break;
 		case TOGGLE_BAND_LOCKING_MSG:
