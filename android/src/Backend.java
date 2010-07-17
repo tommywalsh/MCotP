@@ -75,6 +75,18 @@ public class Backend extends Service {
 
     ///////////////////// SETUP CODE ////////////////////////////////
 
+    @Override
+    public void onStart(Intent intent, int startId) {
+	setForeground(true);
+    }
+
+    // uncomment for API-5 and higher (1.5 is API-3)
+    /*
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startid) {
+	startForeground(R.string.remote_service_started, new Notification(R.drawable.stat_sample, getText(R.string.remote_service_started),System.currentTimeMillis()));
+	return START_STICKY;
+	}*/
     // Here we need to get the generic (that is, not Android-specific) 
     // Engine and SongProvider objects set up, and provide it with a
     // StorageProvider adapter that knows how to access music on an 

@@ -16,7 +16,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".MainUI" android:label="@string/activity_mcotp_ui">
+        <activity android:name=".MainUI" android:label="@string/activity_mcotp_ui" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
