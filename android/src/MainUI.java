@@ -9,6 +9,10 @@
 
 package com.github.tommywalsh.mcotp;
 
+// can be removed when we get rid of kill/notify features
+import android.os.Process;
+import android.widget.Toast;
+
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -20,62 +24,72 @@ import android.os.RemoteException;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.Process;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class MainUI extends Activity {
-    IEngine mEngineService = null;
-    IProvider mProviderService = null;
     
+    // These are the two main objects we'll be talking to
+    IEngine m_engine = null;
+    IProvider m_provider = null;
+
+    // Can be removed later
     Button mKillButton;
+    
+    // On-screen widgets
     Button m_toggleButton;
     Button m_nextButton;
     Button m_repeatButton;
     Button m_shuffleButton;
     Button m_bandLockButton;
     Button m_albumLockButton;
-
     TextView m_bandText;
     TextView m_albumText;
     TextView m_trackText;
 
-    private boolean mIsBound;
+    // Have we currently bound to a service (whether connection has happened yet or not)
+    private boolean m_isBound;
 
-    /**
-     * Standard initialization of this activity.  Set up the UI, then wait
-     * for the user to poke it before doing anything.
-     */
+
+    private void setButtonsEnabled(boolean enabled) {
+	mKillButton.setEnabled(enabled);
+	m_toggleButton.setEnabled(enabled);
+	m_nextButton.setEnabled(enabled);
+	m_repeatButton.setEnabled(enabled);
+	m_shuffleButton.setEnabled(enabled);
+	m_bandLockButton.setEnabled(enabled);
+	m_albumLockButton.setEnabled(enabled);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        // Watch for button clicks.
+	// manual binding... can be removed later
         Button button = (Button)findViewById(R.id.bind);
         button.setOnClickListener(mBindListener);
         button = (Button)findViewById(R.id.unbind);
         button.setOnClickListener(mUnbindListener);
+	
+	// manual service killing... can be removed later
         mKillButton = (Button)findViewById(R.id.kill);
         mKillButton.setOnClickListener(mKillListener);
         mKillButton.setEnabled(false);
-        
+
+	// Find and store the rest of the buttons, and set up their callbacks
 	m_toggleButton = (Button)findViewById(R.id.playPauseButton);
 	m_toggleButton.setOnClickListener(m_toggleListener);
-	m_toggleButton.setEnabled(false);
 
 	m_nextButton = (Button)findViewById(R.id.skipButton);
 	m_nextButton.setOnClickListener(m_nextListener);
-	m_nextButton.setEnabled(false);
 
 	m_repeatButton = (Button)findViewById(R.id.restartButton);
 	m_repeatButton.setOnClickListener(m_repeatListener);
-	m_repeatButton.setEnabled(false);
 
 	m_bandText = (TextView)findViewById(R.id.bandText);
 	m_albumText = (TextView)findViewById(R.id.albumText);
@@ -83,22 +97,18 @@ public class MainUI extends Activity {
 
 	m_shuffleButton = (Button)findViewById(R.id.shuffleButton);
 	m_shuffleButton.setOnClickListener(m_shuffleListener);
-	m_shuffleButton.setEnabled(false);
 
 	m_bandLockButton = (Button)findViewById(R.id.bandLockButton);
 	m_bandLockButton.setOnClickListener(m_bandLockListener);
-	m_bandLockButton.setEnabled(false);
 
 	m_albumLockButton = (Button)findViewById(R.id.albumLockButton);
 	m_albumLockButton.setOnClickListener(m_albumLockListener);
-	m_albumLockButton.setEnabled(false);
 
+
+	setButtonsEnabled(false);
     }
 
-    /**
-     * Class for interacting with the main interface of the service.
-     */
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private ServiceConnection m_engineConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className,
                 IBinder service) {
             // This is called when the connection with the service has been
@@ -106,19 +116,17 @@ public class MainUI extends Activity {
             // interact with the service.  We are communicating with our
             // service through an IDL interface, so get a client-side
             // representation of that from the raw service object.
-            mEngineService = IEngine.Stub.asInterface(service);
-            mKillButton.setEnabled(true);
-	    m_toggleButton.setEnabled(true);
-	    m_nextButton.setEnabled(true);
-	    m_repeatButton.setEnabled(true);
-	    m_shuffleButton.setEnabled(true);
-	    m_bandLockButton.setEnabled(true);
-	    m_albumLockButton.setEnabled(true);
+            m_engine = IEngine.Stub.asInterface(service);
+
+	    if (m_provider != null) {
+		// enable buttons only after all interfaces connected!
+		setButtonsEnabled(true);
+	    }
 
             // We want to monitor the service for as long as we are
             // connected to it.
             try {
-                mEngineService.registerCallback(mCallback);
+                m_engine.registerCallback(mCallback);
             } catch (RemoteException e) {
                 // In this case the service has crashed before we could even
                 // do anything with it; we can count on soon being
@@ -134,14 +142,8 @@ public class MainUI extends Activity {
         public void onServiceDisconnected(ComponentName className) {
             // This is called when the connection with the service has been
             // unexpectedly disconnected -- that is, its process crashed.
-            mEngineService = null;
-            mKillButton.setEnabled(false);
-	    m_toggleButton.setEnabled(false);
-	    m_nextButton.setEnabled(false);
-	    m_repeatButton.setEnabled(false);
-	    m_shuffleButton.setEnabled(false);
-	    m_bandLockButton.setEnabled(false);
-	    m_albumLockButton.setEnabled(false);
+            m_engine = null;
+	    setButtonsEnabled(false);
 
             // As part of the sample, tell the user what happened.
             Toast.makeText(MainUI.this, R.string.remote_service_disconnected,
@@ -150,33 +152,30 @@ public class MainUI extends Activity {
     };
 
 
-    private ServiceConnection mProviderConnection = new ServiceConnection() {
+    private ServiceConnection m_providerConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className,
                 IBinder service) {
-            // Connecting to a secondary interface is the same as any
-            // other interface.
-            mProviderService = IProvider.Stub.asInterface(service);
-            mKillButton.setEnabled(true);
-	    m_toggleButton.setEnabled(true);
-	    m_nextButton.setEnabled(true);
-	    m_repeatButton.setEnabled(true);
-	    m_shuffleButton.setEnabled(true);
-	    m_bandLockButton.setEnabled(true);
-	    m_albumLockButton.setEnabled(true);
+            m_provider = IProvider.Stub.asInterface(service);
+	    if (m_engine != null) {
+		setButtonsEnabled(true);
+	    }
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            mProviderService = null;
-            mKillButton.setEnabled(false);
-	    m_toggleButton.setEnabled(false);
-	    m_nextButton.setEnabled(false);
-	    m_repeatButton.setEnabled(false);
-	    m_shuffleButton.setEnabled(false);
-	    m_bandLockButton.setEnabled(false);
-	    m_albumLockButton.setEnabled(false);
-
+            m_provider = null;
+	    setButtonsEnabled(false);
         }
     };
+
+
+
+
+
+
+
+
+    ////////////////// BUTTON CALLBACKS //////////////////////////////
+    
 
     private OnClickListener mBindListener = new OnClickListener() {
         public void onClick(View v) {
@@ -185,21 +184,22 @@ public class MainUI extends Activity {
             // installed that replace the remote service by implementing
             // the same interface.
             bindService(new Intent(IEngine.class.getName()),
-                    mConnection, Context.BIND_AUTO_CREATE);
+                    m_engineConnection, Context.BIND_AUTO_CREATE);
             bindService(new Intent(IProvider.class.getName()),
-                    mProviderConnection, Context.BIND_AUTO_CREATE);
-            mIsBound = true;
+                    m_providerConnection, Context.BIND_AUTO_CREATE);
+            m_isBound = true;
+	    
         }
     };
 
     private OnClickListener mUnbindListener = new OnClickListener() {
         public void onClick(View v) {
-            if (mIsBound) {
+            if (m_isBound) {
                 // If we have received the service, and hence registered with
                 // it, then now is the time to unregister.
-                if (mEngineService != null) {
+                if (m_engine != null) {
                     try {
-                        mEngineService.unregisterCallback(mCallback);
+                        m_engine.unregisterCallback(mCallback);
                     } catch (RemoteException e) {
                         // There is nothing special we need to do if the service
                         // has crashed.
@@ -207,25 +207,21 @@ public class MainUI extends Activity {
                 }
                 
                 // Detach our existing connection.
-                unbindService(mConnection);
-                unbindService(mProviderConnection);
-                mKillButton.setEnabled(false);
-		m_toggleButton.setEnabled(false);
-		m_nextButton.setEnabled(false);
-		m_repeatButton.setEnabled(false); 
-		m_shuffleButton.setEnabled(false);
-		m_bandLockButton.setEnabled(false);
-		m_albumLockButton.setEnabled(false);
-		mIsBound = false;
+                unbindService(m_engineConnection);
+                unbindService(m_providerConnection);
+
+		setButtonsEnabled(false);
+		m_isBound = false;
             }
         }
     };
 
+
     private OnClickListener m_toggleListener = new OnClickListener() {
 	    public void onClick(View v) {
-		if (mEngineService != null) {
+		if (m_engine != null) {
 		    try {
-			mEngineService.togglePlayPause();
+			m_engine.togglePlayPause();
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
@@ -234,9 +230,9 @@ public class MainUI extends Activity {
 	};
     private OnClickListener m_nextListener = new OnClickListener() {
 	    public void onClick(View v) {
-		if (mEngineService != null) {
+		if (m_engine != null) {
 		    try {
-			mEngineService.skipToNextTrack();
+			m_engine.skipToNextTrack();
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
@@ -245,9 +241,9 @@ public class MainUI extends Activity {
 	};
     private OnClickListener m_repeatListener = new OnClickListener() {
 	    public void onClick(View v) {
-		if (mEngineService != null) {
+		if (m_engine != null) {
 		    try {
-			mEngineService.repeatCurrentTrack();
+			m_engine.repeatCurrentTrack();
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
@@ -256,9 +252,9 @@ public class MainUI extends Activity {
 	};
     private OnClickListener m_shuffleListener = new OnClickListener() {
 	    public void onClick(View v) {
-		if (mProviderService != null) {
+		if (m_provider != null) {
 		    try {
-			mProviderService.toggleShuffling();
+			m_provider.toggleShuffling();
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
@@ -267,9 +263,9 @@ public class MainUI extends Activity {
 	};
     private OnClickListener m_bandLockListener = new OnClickListener() {
 	    public void onClick(View v) {
-		if (mProviderService != null) {
+		if (m_provider != null) {
 		    try {
-			mProviderService.toggleBandLocking();
+			m_provider.toggleBandLocking();
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
@@ -278,9 +274,9 @@ public class MainUI extends Activity {
 	};
     private OnClickListener m_albumLockListener = new OnClickListener() {
 	    public void onClick(View v) {
-		if (mProviderService != null) {
+		if (m_provider != null) {
 		    try {
-			mProviderService.toggleAlbumLocking();
+			m_provider.toggleAlbumLocking();
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
@@ -293,9 +289,9 @@ public class MainUI extends Activity {
             // To kill the process hosting our service, we need to know its
             // PID.  Conveniently our service has a call that will return
             // to us that information.
-            if (mProviderService != null) {
+            if (m_provider != null) {
                 try {
-                    int pid = mProviderService.getPid();
+                    int pid = m_provider.getPid();
                     // Note that, though this API allows us to request to
                     // kill any process based on its PID, the kernel will
                     // still impose standard restrictions on which PIDs you
@@ -316,11 +312,17 @@ public class MainUI extends Activity {
             }
         }
     };
-    
-    // ----------------------------------------------------------------------
-    // Code showing how to deal with callbacks.
-    // ----------------------------------------------------------------------
-    
+
+    /////////////////// END BUTTON CALLBACKS //////////////////////
+
+
+
+
+
+
+
+
+    // This should be reworked.  Helper classes here are ugly.
     class EngineInfo {
 	public boolean isPlaying;
 	public String album;
@@ -334,18 +336,11 @@ public class MainUI extends Activity {
 	public boolean albumLocked;
     }
 	    
-    /**
-     * This implementation is used to receive callbacks from the remote
-     * service.
-     */
+
+    // Updates from the backend
     private IStatusCallback mCallback = new IStatusCallback.Stub() {
-        /**
-         * This is called by the remote service regularly to tell us about
-         * new values.  Note that IPC calls are dispatched through a thread
-         * pool running in each process, so the code executing here will
-         * NOT be running in our main thread like most other things -- so,
-         * to update the UI, we need to use a Handler to hop over there.
-         */
+	    // Here we need to relay the information to a helper running on our own thread
+
 	    public void engineChanged(boolean isPlaying, String band, String album, String track) {
 		EngineInfo ei = new EngineInfo();
 		ei.isPlaying = isPlaying;
@@ -370,7 +365,9 @@ public class MainUI extends Activity {
     
     private static final int PROVIDER_UPDATE = 1;
     private static final int ENGINE_UPDATE = 2;
-    
+
+
+    // Here's the handler that updates the UI
     private Handler mHandler = new Handler() {
         @Override public void handleMessage(Message msg) {
             switch (msg.what) {

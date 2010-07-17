@@ -1,9 +1,18 @@
+/*
+ * Copyright 2010 Tom Walsh 
+ * Redistribution covered by version 3.0 of the GNU General Public Licence available here:
+ * http://www.gnu.org/licenses/gpl-3.0.txt
+ * 
+ */
 package com.github.tommywalsh.mcotp;
 
 import android.media.MediaPlayer;
 import java.util.HashSet;
 import java.util.Iterator;
 
+
+// This class is a simple adapter that takes commands from a generic (not Android-specific) Engine
+// object, and relays/translates them to an Android MediaPlayer object
 public class AndroidPlayer implements Player
 {
     StorageProvider m_storage;

@@ -16,8 +16,6 @@ interface IProvider {
     void toggleAlbumLocking();
     void toggleShuffling();
 
+    // can get rid of this later
     int getPid();
-
-    void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,
-            double aDouble, String aString);
 }

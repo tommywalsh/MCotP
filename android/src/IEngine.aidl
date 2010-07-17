@@ -13,6 +13,8 @@ import com.github.tommywalsh.mcotp.IStatusCallback;
 
 // Interface to the music playing engine (play/pause/advance/etc.)
 interface IEngine {
+
+    // should be moved into a new read-only interface
     void registerCallback(IStatusCallback cb);
     void unregisterCallback(IStatusCallback cb);
 
