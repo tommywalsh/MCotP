@@ -1,6 +1,4 @@
-package com.github.tommywalsh.mcotp.computer;
-
-import com.github.tommywalsh.mcotp.shared.*;
+package com.github.tommywalsh.mcotp;
 
 import java.lang.Process;
 import java.lang.Runtime;

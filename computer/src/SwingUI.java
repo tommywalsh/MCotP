@@ -1,6 +1,5 @@
-package com.github.tommywalsh.mcotp.computer;
+package com.github.tommywalsh.mcotp;
 
-import com.github.tommywalsh.mcotp.shared.*;
 
 import javax.swing.JPanel;
 import javax.swing.JFrame;

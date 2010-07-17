@@ -3,7 +3,6 @@
   <target name="run" depends="computer.jar">
     <property environment="env" />
     <java jar="bin/mcotp-computer.jar"
-	  classpath="bin/mcotp-shared.jar"
 	  fork="true" >
       <arg value="${env.MCOTP}" />
     </java>
@@ -28,7 +27,7 @@
     <jar destfile="bin/mcotp-computer.jar" 
 	 basedir="build/computer/classes">
       <manifest>
-	<attribute name="Main-Class" value="com.github.tommywalsh.mcotp.computer.SwingUI" />
+	<attribute name="Main-Class" value="com.github.tommywalsh.mcotp.SwingUI" />
       </manifest> 
     </jar>
   </target>
