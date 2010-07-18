@@ -31,7 +31,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/widget_word" />
+                android:resource="@xml/mcotp_widget" />
         </receiver>
         <service android:name=".McotpWidget$UpdateService" />
 
