@@ -23,5 +23,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <!-- Widget stuff -->
+        <receiver android:name=".McotpWidget" android:label="AAA_MCotP">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_word" />
+        </receiver>
+        <service android:name=".McotpWidget$UpdateService" />
+
+
     </application>
+
+    <uses-sdk android:minSdkVersion="3" />
+
 </manifest> 

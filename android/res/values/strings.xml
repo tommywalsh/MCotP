@@ -29,4 +29,31 @@
     <string name="remote_service_disconnected">Disconnected from remote service</string>
     <string name="remote_call_failed">Failure calling remote service</string>
 
+
+
+    <string name="template_user_agent">"%s/%s (Linux; Android)"</string>
+    <string name="template_wotd_title">"Wiktionary:Word of the day/%s %s"</string>
+    <string name="template_define_url">"http://en.wiktionary.org/wiki/%s"</string>
+
+    <string name="widget_name">Wiktionary simple</string>
+
+    <string name="widget_loading">Loading word\nof day\u2026</string>
+    <string name="widget_error">No word of\nday found</string>
+
+    <string-array name="month_names">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
+
 </resources>
