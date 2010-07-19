@@ -1,28 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 The Android Open Source Project
-
-     Licensed under the Apache License, Version 2.0 (the "License");
-     you may not use this file except in compliance with the License.
-     You may obtain a copy of the License at
-
-          http://www.apache.org/licenses/LICENSE-2.0
-
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
--->
+<!--
+  Copyright 2010 Tom Walsh 
+  Redistribution covered by version 3.0 of the GNU General Public Licence available here:
+  http://www.gnu.org/licenses/gpl-3.0.txt
+  
+  Partially based on work by The Android Open Source Project, which was licenced under 
+  version 2.0 of The Apache License
+ -->
 
 <resources>
 
     <style name="WidgetBackground">
         <item name="android:background">@drawable/widget_bg</item>
-    </style>
-
-    <style name="BulletPoint">
-        <item name="android:textSize">13sp</item>
-        <item name="android:textColor">@android:color/black</item>
     </style>
 
     <style name="Text" />
@@ -32,19 +21,13 @@
         <item name="android:textColor">@android:color/black</item>
     </style>
 
-    <style name="Text.WordTitle">
+    <style name="Text.Band">
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
 
-    <style name="Text.WordType">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">italic</item>
-        <item name="android:textColor">@android:color/black</item>
-    </style>
-
-    <style name="Text.Definition">
+    <style name="Text.Song">
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@android:color/black</item>
     </style>

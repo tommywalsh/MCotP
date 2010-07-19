@@ -16,67 +16,23 @@
 
 package com.github.tommywalsh.mcotp;
 
-import com.github.tommywalsh.mcotp.SimpleWikiHelper.ApiException;
-import com.github.tommywalsh.mcotp.SimpleWikiHelper.ParseException;
-
-import android.app.PendingIntent;
-import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.net.Uri;
-import android.os.IBinder;
-import android.text.format.Time;
-import android.util.Log;
 import android.widget.RemoteViews;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-/**
- * Define a simple widget that shows the Wiktionary "Word of the day." To build
- * an update we spawn a background {@link Service} to perform the API queries.
- */
 public class McotpWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
             int[] appWidgetIds) {
-        // To prevent any ANR timeouts, we perform the update in a service
-        context.startService(new Intent(context, UpdateService.class));
-    }
 
-    public static class UpdateService extends Service {
-        @Override
-        public void onStart(Intent intent, int startId) {
-            // Build the widget update for today
-            RemoteViews updateViews = buildUpdate(this);
 
-            // Push update for this widget to the home screen
-            ComponentName thisWidget = new ComponentName(this, McotpWidget.class);
-            AppWidgetManager manager = AppWidgetManager.getInstance(this);
-            manager.updateAppWidget(thisWidget, updateViews);
-        }
-
-        /**
-         * Build a widget update to show the current Wiktionary
-         * "Word of the day." Will block until the online API returns.
-         */
-        public RemoteViews buildUpdate(Context context) {
-            RemoteViews updateViews = null;
-	    updateViews = new RemoteViews(context.getPackageName(), R.layout.mcotp_widget);
-	    updateViews.setTextViewText(R.id.widget_band, "Band");
-	    updateViews.setTextViewText(R.id.widget_song, "Song");
-	    
-            return updateViews;
-        }
-
-        @Override
-        public IBinder onBind(Intent intent) {
-            // We don't need to bind to this service
-            return null;
-        }
+	RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.mcotp_widget);
+	updateViews.setTextViewText(R.id.widget_band, "Band");
+	updateViews.setTextViewText(R.id.widget_song, "Song");
+	for (int i=0; i < appWidgetIds.length; i++) {
+	    appWidgetManager.updateAppWidget(appWidgetIds[i], updateViews);
+	}
     }
 }
