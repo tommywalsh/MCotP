@@ -24,6 +24,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.content.ComponentName;
+import android.content.ServiceConnection;
 
 public class McotpWidget extends AppWidgetProvider {
     @Override
@@ -45,17 +46,24 @@ public class McotpWidget extends AppWidgetProvider {
     public static class UpdateService extends Service {
         @Override
 	    public void onStart(Intent intent, int startId) {
-            RemoteViews updateViews = buildUpdate(this);
+	    updateUI("Waiting for MCotP service");
+
+	    //    bindService(new Intent(IEngine.class.getName()),
+	    //	m_connection, Context.BIND_AUTO_CREATE);
+        }
+
+	private void updateUI(String message) {
+            RemoteViews updateViews = buildUpdate(this, message);
 	    
             ComponentName thisWidget = new ComponentName(this, McotpWidget.class);
             AppWidgetManager manager = AppWidgetManager.getInstance(this);
             manager.updateAppWidget(thisWidget, updateViews);
-        }
+	}
 	
-        public RemoteViews buildUpdate(Context context) {
+        public RemoteViews buildUpdate(Context context, String message) {
 	    
 	    RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_message);
-	    updateViews.setTextViewText(R.id.message, "Waiting for MCotP service");
+	    updateViews.setTextViewText(R.id.message, message);
 	    return updateViews;
         }
 	
@@ -63,5 +71,19 @@ public class McotpWidget extends AppWidgetProvider {
 	public IBinder onBind(Intent intent) {
             return null;
 	}
+
+
+
+	private ServiceConnection m_engineConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className,
+					       IBinder service) {
+		    updateUI("Connected!");
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+		    updateUI("Disconnected!");
+		}
+	    };
+
     }
 }
