@@ -33,7 +33,7 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/mcotp_widget" />
         </receiver>
-<!--        <service android:name=".McotpWidget$UpdateService" /> -->
+        <service android:name=".McotpWidget$UpdateService" />
 
 
     </application>

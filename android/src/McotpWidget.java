@@ -20,19 +20,49 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.widget.RemoteViews;
-
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+import android.content.ComponentName;
 
 public class McotpWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
             int[] appWidgetIds) {
+	
+	context.startService(new Intent(context, UpdateService.class));
+	
 
-
+	/*
 	RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.mcotp_widget);
 	updateViews.setTextViewText(R.id.widget_band, "Band");
 	updateViews.setTextViewText(R.id.widget_song, "Song");
 	for (int i=0; i < appWidgetIds.length; i++) {
 	    appWidgetManager.updateAppWidget(appWidgetIds[i], updateViews);
+	    }*/
+    }
+
+    public static class UpdateService extends Service {
+        @Override
+	    public void onStart(Intent intent, int startId) {
+            RemoteViews updateViews = buildUpdate(this);
+	    
+            ComponentName thisWidget = new ComponentName(this, McotpWidget.class);
+            AppWidgetManager manager = AppWidgetManager.getInstance(this);
+            manager.updateAppWidget(thisWidget, updateViews);
+        }
+	
+        public RemoteViews buildUpdate(Context context) {
+	    
+	    RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.mcotp_widget);
+	    updateViews.setTextViewText(R.id.widget_band, "Foo Band");
+	    updateViews.setTextViewText(R.id.widget_song, "Foo Song");
+	    return updateViews;
+        }
+	
+        @Override
+	public IBinder onBind(Intent intent) {
+            return null;
 	}
     }
 }
