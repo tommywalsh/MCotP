@@ -54,9 +54,8 @@ public class McotpWidget extends AppWidgetProvider {
 	
         public RemoteViews buildUpdate(Context context) {
 	    
-	    RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.mcotp_widget);
-	    updateViews.setTextViewText(R.id.widget_band, "Foo Band");
-	    updateViews.setTextViewText(R.id.widget_song, "Foo Song");
+	    RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_message);
+	    updateViews.setTextViewText(R.id.message, "Waiting for MCotP service");
 	    return updateViews;
         }
 	

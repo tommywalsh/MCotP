@@ -29,6 +29,6 @@
 
 
 
-    <string name="widget_loading">Connecting to MCotP</string>
+    <string name="widget_loading">Widget starting</string>
 
 </resources>
