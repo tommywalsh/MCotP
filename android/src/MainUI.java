@@ -29,7 +29,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-
 public class MainUI extends Activity {
     
     // These are the two main objects we'll be talking to
@@ -46,9 +45,6 @@ public class MainUI extends Activity {
     TextView m_bandText;
     TextView m_albumText;
     TextView m_trackText;
-
-    // Have we currently bound to a service (whether connection has happened yet or not)
-    private boolean m_isBound;
 
 
     private void setButtonsEnabled(boolean enabled) {
@@ -90,7 +86,6 @@ public class MainUI extends Activity {
 	m_albumLockButton.setOnClickListener(m_albumLockListener);
 
 	setButtonsEnabled(false);
-
 
 	bindService(new Intent(IEngine.class.getName()),
                     m_engineConnection, Context.BIND_AUTO_CREATE);
@@ -174,47 +169,6 @@ public class MainUI extends Activity {
 
     ////////////////// BUTTON CALLBACKS //////////////////////////////
     
-
-    private OnClickListener mBindListener = new OnClickListener() {
-        public void onClick(View v) {
-            // Establish a couple connections with the service, binding
-            // by interface names.  This allows other applications to be
-            // installed that replace the remote service by implementing
-            // the same interface.
-            bindService(new Intent(IEngine.class.getName()),
-                    m_engineConnection, Context.BIND_AUTO_CREATE);
-            bindService(new Intent(IProvider.class.getName()),
-                    m_providerConnection, Context.BIND_AUTO_CREATE);
-            m_isBound = true;
-	    
-        }
-    };
-
-    private OnClickListener mUnbindListener = new OnClickListener() {
-        public void onClick(View v) {
-            if (m_isBound) {
-                // If we have received the service, and hence registered with
-                // it, then now is the time to unregister.
-                if (m_engine != null) {
-                    try {
-                        m_engine.unregisterCallback(mCallback);
-                    } catch (RemoteException e) {
-                        // There is nothing special we need to do if the service
-                        // has crashed.
-                    }
-                }
-                
-                // Detach our existing connection.
-                unbindService(m_engineConnection);
-                unbindService(m_providerConnection);
-
-		setButtonsEnabled(false);
-		m_isBound = false;
-            }
-        }
-    };
-
-
     private OnClickListener m_toggleListener = new OnClickListener() {
 	    public void onClick(View v) {
 		if (m_engine != null) {
