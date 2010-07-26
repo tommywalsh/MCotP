@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2010 Tom Walsh 
+  Redistribution covered by version 3.0 of the GNU General Public Licence available here:
+  http://www.gnu.org/licenses/gpl-3.0.txt
+  
+  Partially based on work by The Android Open Source Project, which was licenced under 
+  version 2.0 of The Apache License
+ -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    style="@style/WidgetBackground">
+
+  <Button
+     android:id="@+id/widget_skip"
+     android:layout_height="fill_parent" 
+     android:layout_width="wrap_content" 
+     android:layout_alignParentRight="true" 
+     android:text="@string/next"
+     />
+
+  <Button
+     android:id="@+id/widget_play_pause"
+     android:layout_height="fill_parent" 
+     android:layout_width="wrap_content" 
+     android:layout_toLeftOf="@id/widget_skip" 
+     android:text="@string/toggle"
+     />
+  
+  
+  <TextView
+     android:id="@+id/widget_band"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_marginTop="14dip"
+     android:layout_marginBottom="1dip"
+     android:includeFontPadding="false"
+     android:layout_alignParentTop="true"
+     android:layout_alignParentLeft="true"
+     android:layout_toLeftOf="@id/widget_play_pause"
+     android:singleLine="true"
+     android:ellipsize="end"
+     style="@style/Text.Band" />
+  
+  <TextView
+     android:id="@+id/widget_song"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content"
+     android:layout_below="@id/widget_band"
+     android:layout_toLeftOf="@id/widget_play_pause"
+     android:paddingRight="5dip"
+     android:paddingBottom="4dip"
+     android:includeFontPadding="false"
+     android:lineSpacingMultiplier="0.9"
+     android:maxLines="4"
+     android:fadingEdge="vertical"
+     style="@style/Text.Song" />
+  
+</RelativeLayout>

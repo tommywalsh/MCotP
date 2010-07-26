@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2010 Tom Walsh 
+  Redistribution covered by version 3.0 of the GNU General Public Licence available here:
+  http://www.gnu.org/licenses/gpl-3.0.txt
+  
+  Partially based on work by The Android Open Source Project, which was licenced under 
+  version 2.0 of The Apache License
+ -->
+
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="294dip"
+    android:minHeight="146dip"
+    android:updatePeriodMillis="86400000"
+    android:initialLayout="@layout/widget_message" />

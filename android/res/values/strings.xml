@@ -21,12 +21,14 @@
 
     <string name="activity_mcotp_ui">MCotP</string>
 
-    <string name="remote_service_binding">This demonstrates how you can connect with a persistent
-        service running in another process.  Use the kill button to see what happens when
-        the process crashes.</string>
     <string name="kill_process">Kill Process</string>
     <string name="remote_service_connected">Connected to remote service</string>
     <string name="remote_service_disconnected">Disconnected from remote service</string>
     <string name="remote_call_failed">Failure calling remote service</string>
+
+
+
+
+    <string name="widget_loading">Widget starting</string>
 
 </resources>
