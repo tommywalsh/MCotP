@@ -94,13 +94,6 @@
 	  android:layout_toRightOf="@id/bind"
           android:text="@string/unbind_service" />
   
-  <Button android:id="@+id/kill"
-          android:layout_width="wrap_content" 
-	  android:layout_height="wrap_content" 
-	  android:layout_below="@id/albumLockButton"
-	  android:layout_toRightOf="@id/unbind"
-          android:text="@string/kill_process" />
-  
   <TextView
      android:id="@+id/songText"
      android:layout_width="fill_parent" 

@@ -36,9 +36,6 @@ public class MainUI extends Activity {
     IEngine m_engine = null;
     IProvider m_provider = null;
 
-    // Can be removed later
-    Button mKillButton;
-    
     // On-screen widgets
     Button m_toggleButton;
     Button m_nextButton;
@@ -46,6 +43,8 @@ public class MainUI extends Activity {
     Button m_shuffleButton;
     Button m_bandLockButton;
     Button m_albumLockButton;
+    Button m_bindButton;
+    Button m_unbindButton;
     TextView m_bandText;
     TextView m_albumText;
     TextView m_trackText;
@@ -55,7 +54,6 @@ public class MainUI extends Activity {
 
 
     private void setButtonsEnabled(boolean enabled) {
-	mKillButton.setEnabled(enabled);
 	m_toggleButton.setEnabled(enabled);
 	m_nextButton.setEnabled(enabled);
 	m_repeatButton.setEnabled(enabled);
@@ -71,16 +69,13 @@ public class MainUI extends Activity {
         setContentView(R.layout.main);
 
 	// manual binding... can be removed later
-        Button button = (Button)findViewById(R.id.bind);
-        button.setOnClickListener(mBindListener);
-        button = (Button)findViewById(R.id.unbind);
-        button.setOnClickListener(mUnbindListener);
+        m_bindButton = (Button)findViewById(R.id.bind);
+        m_bindButton.setOnClickListener(mBindListener);
+	m_bindButton.setEnabled(true);
+        m_unbindButton = (Button)findViewById(R.id.unbind);
+        m_unbindButton.setOnClickListener(mUnbindListener);
+	m_unbindButton.setEnabled(false);
 	
-	// manual service killing... can be removed later
-        mKillButton = (Button)findViewById(R.id.kill);
-        mKillButton.setOnClickListener(mKillListener);
-        mKillButton.setEnabled(false);
-
 	// Find and store the rest of the buttons, and set up their callbacks
 	m_toggleButton = (Button)findViewById(R.id.playPauseButton);
 	m_toggleButton.setOnClickListener(m_toggleListener);
@@ -121,6 +116,8 @@ public class MainUI extends Activity {
 	    if (m_provider != null) {
 		// enable buttons only after all interfaces connected!
 		setButtonsEnabled(true);
+		m_bindButton.setEnabled(false);
+		m_unbindButton.setEnabled(true);
 	    }
 
             // We want to monitor the service for as long as we are
@@ -145,6 +142,7 @@ public class MainUI extends Activity {
             m_engine = null;
 	    setButtonsEnabled(false);
 
+
             // As part of the sample, tell the user what happened.
             Toast.makeText(MainUI.this, R.string.remote_service_disconnected,
                     Toast.LENGTH_SHORT).show();
@@ -164,6 +162,9 @@ public class MainUI extends Activity {
         public void onServiceDisconnected(ComponentName className) {
             m_provider = null;
 	    setButtonsEnabled(false);
+	    m_bindButton.setEnabled(true);
+	    m_unbindButton.setEnabled(false);
+
         }
     };
 
@@ -283,35 +284,6 @@ public class MainUI extends Activity {
 		}
 	    }
 	};
-
-    private OnClickListener mKillListener = new OnClickListener() {
-        public void onClick(View v) {
-            // To kill the process hosting our service, we need to know its
-            // PID.  Conveniently our service has a call that will return
-            // to us that information.
-            if (m_provider != null) {
-                try {
-                    int pid = m_provider.getPid();
-                    // Note that, though this API allows us to request to
-                    // kill any process based on its PID, the kernel will
-                    // still impose standard restrictions on which PIDs you
-                    // are actually able to kill.  Typically this means only
-                    // the process running your application and any additional
-                    // processes created by that app as shown here; packages
-                    // sharing a common UID will also be able to kill each
-                    // other's processes.
-                    Process.killProcess(pid);
-                } catch (RemoteException ex) {
-                    // Recover gracefully from the process hosting the
-                    // server dying.
-                    // Just for purposes of the sample, put up a notification.
-                    Toast.makeText(MainUI.this,
-                            R.string.remote_call_failed,
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    };
 
     /////////////////// END BUTTON CALLBACKS //////////////////////
 
