@@ -275,11 +275,6 @@ public class Backend extends Service {
 		mHandler.sendEmptyMessage(TOGGLE_SHUFFLING_MSG);
 	    }
 
-	    // can get rid of this later
-	    public int getPid() {
-		return Process.myPid();
-	    }
-
     };
 
     private static final int NEXT_TRACK_MSG = 1;
