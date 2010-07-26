@@ -43,8 +43,6 @@ public class MainUI extends Activity {
     Button m_shuffleButton;
     Button m_bandLockButton;
     Button m_albumLockButton;
-    Button m_bindButton;
-    Button m_unbindButton;
     TextView m_bandText;
     TextView m_albumText;
     TextView m_trackText;
@@ -67,16 +65,8 @@ public class MainUI extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
-	// manual binding... can be removed later
-        m_bindButton = (Button)findViewById(R.id.bind);
-        m_bindButton.setOnClickListener(mBindListener);
-	m_bindButton.setEnabled(true);
-        m_unbindButton = (Button)findViewById(R.id.unbind);
-        m_unbindButton.setOnClickListener(mUnbindListener);
-	m_unbindButton.setEnabled(false);
 	
-	// Find and store the rest of the buttons, and set up their callbacks
+	// Find and store the buttons, and set up their callbacks
 	m_toggleButton = (Button)findViewById(R.id.playPauseButton);
 	m_toggleButton.setOnClickListener(m_toggleListener);
 
@@ -99,9 +89,21 @@ public class MainUI extends Activity {
 	m_albumLockButton = (Button)findViewById(R.id.albumLockButton);
 	m_albumLockButton.setOnClickListener(m_albumLockListener);
 
-
 	setButtonsEnabled(false);
+
+
+	bindService(new Intent(IEngine.class.getName()),
+                    m_engineConnection, Context.BIND_AUTO_CREATE);
+	bindService(new Intent(IProvider.class.getName()),
+                    m_providerConnection, Context.BIND_AUTO_CREATE);
+	
     }
+
+    protected void onStart() {
+	super.onStart();
+    }
+
+    
 
     private ServiceConnection m_engineConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className,
@@ -116,8 +118,6 @@ public class MainUI extends Activity {
 	    if (m_provider != null) {
 		// enable buttons only after all interfaces connected!
 		setButtonsEnabled(true);
-		m_bindButton.setEnabled(false);
-		m_unbindButton.setEnabled(true);
 	    }
 
             // We want to monitor the service for as long as we are
@@ -162,9 +162,6 @@ public class MainUI extends Activity {
         public void onServiceDisconnected(ComponentName className) {
             m_provider = null;
 	    setButtonsEnabled(false);
-	    m_bindButton.setEnabled(true);
-	    m_unbindButton.setEnabled(false);
-
         }
     };
 

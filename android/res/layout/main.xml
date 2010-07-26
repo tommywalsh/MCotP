@@ -80,25 +80,11 @@
      android:text="PlayPauseButton"
      />
 
-  <Button android:id="@+id/bind"
-          android:layout_width="wrap_content" 
-	  android:layout_height="wrap_content" 
-	  android:layout_below="@id/albumLockButton"
-	  android:layout_alignParentLeft="true"
-          android:text="@string/bind_service" />
-  
-  <Button android:id="@+id/unbind"
-          android:layout_width="wrap_content" 
-	  android:layout_height="wrap_content" 
-	  android:layout_below="@id/albumLockButton"
-	  android:layout_toRightOf="@id/bind"
-          android:text="@string/unbind_service" />
-  
   <TextView
      android:id="@+id/songText"
      android:layout_width="fill_parent" 
      android:layout_height="wrap_content" 
-     android:layout_below="@id/bind"
+     android:layout_below="@id/albumLockButton"
      android:layout_above="@id/playPauseButton"
      android:layout_centerHorizontal="true"
      android:layout_centerVertical="true"
