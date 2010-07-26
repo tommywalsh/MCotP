@@ -14,12 +14,6 @@ import java.io.Serializable;
 /////////////////////////////////////////////////////////////////////
 
 
-// TO-DO List
-//
-// * Serialize our cache of songs to speed loading
-//
-
-
 public class SongProvider implements Serializable
 {
     // The next two functions give an iterator-like interface
@@ -94,12 +88,13 @@ public class SongProvider implements Serializable
 	m_bandClamp = "";
 	m_albumClamp = "";
 	m_currentSong = null;
-	m_currentSongNumber = 0;
 	m_currentBand = null;
 	m_currentAlbum = null;
 	m_random = new Random();
 
-	advanceToSpecificBandSong(m_allBands.elementAt(0), 0);
+	buildIndex();
+
+	advanceToSpecificSong(m_currentSongNumber);
     }
 
     ///////// END OF PUBLIC INTERFACE //////////
@@ -117,14 +112,14 @@ public class SongProvider implements Serializable
 
     transient private StorageProvider m_storage;
     
-    private TreeMap<Integer, Integer> m_indexToBand; 
+    transient private TreeMap<Integer, Integer> m_indexToBand; 
     private Vector<Band> m_allBands;
     private int m_numSongs;
     transient private boolean m_isRandom = false;
     transient private String m_bandClamp = "";
     transient private String m_albumClamp = "";
     transient private String m_currentSong;
-    transient private int m_currentSongNumber;
+    private int m_currentSongNumber;
     
     transient private Band m_currentBand;
     transient private Album m_currentAlbum;
@@ -220,6 +215,12 @@ public class SongProvider implements Serializable
 
 
 
+    private void buildIndex()
+    {
+	for (int i=0; i<m_allBands.size(); ++i) {
+	    m_indexToBand.put((Integer)(m_allBands.elementAt(i).firstSong()), i);
+	}
+    }
     
     public void constructLibrary()
     {

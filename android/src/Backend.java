@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import android.content.Context;
 
+import android.util.Log;
 
 
 /// This class is the main interface to/from the rest of the android world
@@ -108,6 +109,8 @@ public class Backend extends Service {
     }
 
 
+    private static final String TAG = "MCotP/Backend";
+
 
     // Loading the song provider gets broken out into its own function.
     // This is a somewhat complicated process because we want to speed up
@@ -117,37 +120,49 @@ public class Backend extends Service {
 	SongProvider songProvider = null;
 
 	// First, try to find a serialized version of the provider from storage
+	Log.d(TAG, "Looking for cached file");
 	final String FILENAME = "song_provider";
 	try {
 	    FileInputStream fis = openFileInput(FILENAME);
 	    ObjectInputStream ois = new ObjectInputStream(fis);
 	    songProvider = (SongProvider)(ois.readObject());
 	    if (songProvider != null) {
+		Log.d(TAG, "Got song provider");
 		songProvider.initAfterDeserialization(sp);
+	    } else {
+		Log.d(TAG, "Did not get song provider");
 	    }
 	}
 	// No need to do anything about these exceptions,
 	// just construct the library from scratch
 	catch (java.io.FileNotFoundException e) {
+	    Log.d(TAG, "No cached file");
 	} catch (java.io.IOException e) {
+	    Log.d(TAG, "Can't read cached file");
 	} catch (java.lang.ClassNotFoundException e) {
+	    Log.d(TAG, "Can't deserialize");
 	}
 
 
 	// If loading was unsuccessful, load it from scratch
 	if (songProvider == null) {
 	    songProvider = new SongProvider(sp);
+
+	    Log.d(TAG, "Constructing from scratch");
 	    songProvider.constructLibrary();
 
 	    // Now that we've got a newly-constructed library in memory,
 	    // try to write it out to storage so we can load more quickly
 	    // next time
 	    try {
+		Log.d(TAG, "Trying to save to" + getFilesDir());
 		FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
 		ObjectOutputStream oos = new ObjectOutputStream(fos);
 		oos.writeObject(m_songProvider);
 	    } catch (java.io.FileNotFoundException e) {
+		Log.d(TAG, "Can't find output file");
 	    } catch (java.io.IOException e) {
+		Log.d(TAG, "Can't write output file");
 	    }
 	}
 
