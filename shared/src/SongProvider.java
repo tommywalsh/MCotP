@@ -217,6 +217,7 @@ public class SongProvider implements Serializable
 
     private void buildIndex()
     {
+	m_indexToBand = new TreeMap<Integer, Integer>();
 	for (int i=0; i<m_allBands.size(); ++i) {
 	    m_indexToBand.put((Integer)(m_allBands.elementAt(i).firstSong()), i);
 	}
