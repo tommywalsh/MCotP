@@ -26,6 +26,8 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
+import android.os.Handler;
+import android.os.Message;
 
 public class McotpWidget extends AppWidgetProvider {
     @Override
@@ -102,11 +104,19 @@ public class McotpWidget extends AppWidgetProvider {
 		}
 
 
+		class UIInfo {
+		    public String band;
+		    public String song;
+		}
 
 		private IStatusCallback m_callback = new IStatusCallback.Stub() {
 			public void engineChanged(boolean isPlaying, String band, String album, String song) {
-			    updateUI(band, song);
-			}
+			    UIInfo uii = new UIInfo();
+			    uii.band = band;
+			    uii.song = song;
+			    mHandler.sendMessage(mHandler.obtainMessage(0, uii));
+
+				}
 	    
 			public void providerChanged(boolean shuffle, boolean bandLock, boolean albumLock)
 			{
@@ -114,7 +124,13 @@ public class McotpWidget extends AppWidgetProvider {
 
 		    };
 		
-		
+
+		private Handler mHandler = new Handler() {
+			@Override public void handleMessage(Message msg) {
+			    UIInfo uii = (UIInfo)(msg.obj);
+			    updateUI(uii.band, uii.song);
+			}
+		    };		
 	    };
 
     }

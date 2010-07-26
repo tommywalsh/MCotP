@@ -15,30 +15,49 @@
     android:focusable="true"
     style="@style/WidgetBackground">
 
-    <TextView
-       android:id="@+id/widget_band"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginTop="14dip"
-       android:layout_marginBottom="1dip"
-       android:includeFontPadding="false"
-       android:layout_alignParentTop="true"
-       android:layout_alignParentLeft="true"
-       android:singleLine="true"
-       android:ellipsize="end"
-       style="@style/Text.Band" />
+  <Button
+     android:id="@+id/widget_skip"
+     android:layout_height="fill_parent" 
+     android:layout_width="wrap_content" 
+     android:layout_alignParentRight="true" 
+     android:text="@string/next"
+     />
 
-    <TextView
-       android:id="@+id/widget_song"
-       android:layout_width="fill_parent"
-       android:layout_height="wrap_content"
-       android:layout_below="@id/widget_band"
-       android:paddingRight="5dip"
-       android:paddingBottom="4dip"
-       android:includeFontPadding="false"
-       android:lineSpacingMultiplier="0.9"
-       android:maxLines="4"
-       android:fadingEdge="vertical"
-       style="@style/Text.Song" />
-
+  <Button
+     android:id="@+id/widget_play_pause"
+     android:layout_height="fill_parent" 
+     android:layout_width="wrap_content" 
+     android:layout_toLeftOf="@id/widget_skip" 
+     android:text="@string/toggle"
+     />
+  
+  
+  <TextView
+     android:id="@+id/widget_band"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_marginTop="14dip"
+     android:layout_marginBottom="1dip"
+     android:includeFontPadding="false"
+     android:layout_alignParentTop="true"
+     android:layout_alignParentLeft="true"
+     android:layout_toLeftOf="@id/widget_play_pause"
+     android:singleLine="true"
+     android:ellipsize="end"
+     style="@style/Text.Band" />
+  
+  <TextView
+     android:id="@+id/widget_song"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content"
+     android:layout_below="@id/widget_band"
+     android:layout_toLeftOf="@id/widget_play_pause"
+     android:paddingRight="5dip"
+     android:paddingBottom="4dip"
+     android:includeFontPadding="false"
+     android:lineSpacingMultiplier="0.9"
+     android:maxLines="4"
+     android:fadingEdge="vertical"
+     style="@style/Text.Song" />
+  
 </RelativeLayout>
