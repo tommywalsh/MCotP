@@ -84,12 +84,6 @@ public class SongProvider implements Serializable
 
     public void initAfterDeserialization(StorageProvider sp) {
 	m_storage = sp;
-	m_isRandom = false;
-	m_bandClamp = "";
-	m_albumClamp = "";
-	m_currentSong = null;
-	m_currentBand = null;
-	m_currentAlbum = null;
 	m_random = new Random();
 
 	buildIndex();
@@ -115,14 +109,14 @@ public class SongProvider implements Serializable
     transient private TreeMap<Integer, Integer> m_indexToBand; 
     private Vector<Band> m_allBands;
     private int m_numSongs;
-    transient private boolean m_isRandom = false;
-    transient private String m_bandClamp = "";
-    transient private String m_albumClamp = "";
-    transient private String m_currentSong;
+    private boolean m_isRandom = false;
+    private String m_bandClamp = "";
+    private String m_albumClamp = "";
+    private String m_currentSong;
     private int m_currentSongNumber;
     
-    transient private Band m_currentBand;
-    transient private Album m_currentAlbum;
+    private Band m_currentBand;
+    private Album m_currentAlbum;
 
 
 

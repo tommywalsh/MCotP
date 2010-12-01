@@ -110,6 +110,7 @@ public class Backend extends Service {
 
 
     private static final String TAG = "MCotP/Backend";
+    private static final String FILENAME = "song_provider";
 
 
     // Loading the song provider gets broken out into its own function.
@@ -121,7 +122,6 @@ public class Backend extends Service {
 
 	// First, try to find a serialized version of the provider from storage
 	Log.d(TAG, "Looking for cached file");
-	final String FILENAME = "song_provider";
 	try {
 	    FileInputStream fis = openFileInput(FILENAME);
 	    ObjectInputStream ois = new ObjectInputStream(fis);
@@ -153,25 +153,25 @@ public class Backend extends Service {
 	    Log.d(TAG, "Constructing from scratch");
 	    songProvider.constructLibrary();
 
-	    // Now that we've got a newly-constructed library in memory,
-	    // try to write it out to storage so we can load more quickly
-	    // next time
-	    try {
-		Log.d(TAG, "Trying to save to " + getFilesDir());
-		FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
-		ObjectOutputStream oos = new ObjectOutputStream(fos);
-		oos.writeObject(songProvider);
-		fos.close();
-	    } catch (java.io.FileNotFoundException e) {
-		Log.d(TAG, "Can't find output file");
-	    } catch (java.io.IOException e) {
-		Log.d(TAG, "Can't write output file");
-	    }
+	    saveState(songProvider);
 	}
 
 	return songProvider;
     }
 
+    private void saveState(SongProvider sp) {
+	try {
+	    Log.d(TAG, "Trying to save to " + getFilesDir());
+	    FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+	    ObjectOutputStream oos = new ObjectOutputStream(fos);
+	    oos.writeObject(sp);
+	    fos.close();
+	} catch (java.io.FileNotFoundException e) {
+	    Log.d(TAG, "Can't find output file");
+	} catch (java.io.IOException e) {
+	    Log.d(TAG, "Can't write output file");
+	}	
+    }
 
     @Override
     public void onCreate() {
@@ -184,6 +184,8 @@ public class Backend extends Service {
 
     @Override
     public void onDestroy() {
+	saveState(m_songProvider);
+
         mCallbacks.kill();
 
 	// Can be removed later
