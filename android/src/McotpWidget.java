@@ -94,13 +94,10 @@ public class McotpWidget extends AppWidgetProvider {
 		    try {
 			m_engine.registerCallback(m_callback);
 		    } catch (RemoteException e) {
-		    }
-		    
-		    updateUI("Connected!");
+		    }		    
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
-		    updateUI("Disconnected!");
 		}
 
 

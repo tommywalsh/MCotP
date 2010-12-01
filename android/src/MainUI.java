@@ -124,11 +124,7 @@ public class MainUI extends Activity {
                 // do anything with it; we can count on soon being
                 // disconnected (and then reconnected if it can be restarted)
                 // so there is no need to do anything here.
-            }
-            
-            // As part of the sample, tell the user what happened.
-            Toast.makeText(MainUI.this, R.string.remote_service_connected,
-                    Toast.LENGTH_SHORT).show();
+            }            
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -136,11 +132,6 @@ public class MainUI extends Activity {
             // unexpectedly disconnected -- that is, its process crashed.
             m_engine = null;
 	    setButtonsEnabled(false);
-
-
-            // As part of the sample, tell the user what happened.
-            Toast.makeText(MainUI.this, R.string.remote_service_disconnected,
-                    Toast.LENGTH_SHORT).show();
         }
     };
 

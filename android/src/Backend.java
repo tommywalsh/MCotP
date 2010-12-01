@@ -70,7 +70,7 @@ public class Backend extends Service {
                 new Intent(this, MainUI.class), 0);
         notification.setLatestEventInfo(this, getText(R.string.remote_service_label),
                        text, contentIntent);
-        mNM.notify(R.string.remote_service_started, notification);
+	mNM.notify(R.string.remote_service_started, notification);
     }
 
 
