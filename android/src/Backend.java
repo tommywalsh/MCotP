@@ -125,7 +125,9 @@ public class Backend extends Service {
 	try {
 	    FileInputStream fis = openFileInput(FILENAME);
 	    ObjectInputStream ois = new ObjectInputStream(fis);
-	    songProvider = (SongProvider)(ois.readObject());
+	    Object o = ois.readObject();
+	    songProvider = (SongProvider)(o);
+	    fis.close();
 	    if (songProvider != null) {
 		Log.d(TAG, "Got song provider");
 		songProvider.initAfterDeserialization(sp);
@@ -155,10 +157,11 @@ public class Backend extends Service {
 	    // try to write it out to storage so we can load more quickly
 	    // next time
 	    try {
-		Log.d(TAG, "Trying to save to" + getFilesDir());
+		Log.d(TAG, "Trying to save to " + getFilesDir());
 		FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
 		ObjectOutputStream oos = new ObjectOutputStream(fos);
-		oos.writeObject(m_songProvider);
+		oos.writeObject(songProvider);
+		fos.close();
 	    } catch (java.io.FileNotFoundException e) {
 		Log.d(TAG, "Can't find output file");
 	    } catch (java.io.IOException e) {
@@ -185,7 +188,6 @@ public class Backend extends Service {
 
 	// Can be removed later
         mNM.cancel(R.string.remote_service_started);
-        Toast.makeText(this, R.string.remote_service_stopped, Toast.LENGTH_SHORT).show();
     }
 
     ///////////////////// END SETUP CODE ////////////////////////////////
