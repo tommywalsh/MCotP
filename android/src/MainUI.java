@@ -94,6 +94,16 @@ public class MainUI extends Activity {
 	
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+	unbindService(m_engineConnection);
+	unbindService(m_providerConnection);
+    }
+
+
+
     protected void onStart() {
 	super.onStart();
     }

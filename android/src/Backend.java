@@ -184,6 +184,8 @@ public class Backend extends Service {
 
     @Override
     public void onDestroy() {
+	super.onDestroy();
+
 	saveState(m_songProvider);
 
         mCallbacks.kill();
