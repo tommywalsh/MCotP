@@ -71,11 +71,11 @@ public class SongProvider implements Serializable
 
     public boolean isBandClamped()
     {
-	return !isAlbumClamped() && (m_bandClamp != null && m_bandClamp != "");
+	return !isAlbumClamped() && (m_bandClamp != null && !m_bandClamp.equals(""));
     }
     public boolean isAlbumClamped()
     {
-	return (m_albumClamp != null && m_albumClamp != "");
+	return (m_albumClamp != null && !m_albumClamp.equals(""));
     }
 
     public SongProvider(StorageProvider sp) {
@@ -341,12 +341,12 @@ public class SongProvider implements Serializable
     }
 
     private void advanceToNextLinearSong() {
-	if (m_albumClamp != null && m_albumClamp != "") {
+	if (m_albumClamp != null && !m_albumClamp.equals("")) {
 	    // Might wrap to beginning of album
 	    advanceToNextAlbumSong();
 	} else if (m_currentAlbum != null && m_currentSongNumber < m_currentAlbum.lastSong()) {
 	    advanceToNextAlbumSong();
-	} else if (m_bandClamp != null && m_bandClamp != "") {
+	} else if (m_bandClamp != null && !m_bandClamp.equals("")) {
 	    // Might wrap to beginning of band
 	    advanceToNextBandSong();
 	} else if (m_currentSongNumber < m_currentBand.lastSong()) {
@@ -365,12 +365,12 @@ public class SongProvider implements Serializable
     private void advanceToRandomSong() {
         int firstValid = 0;
         int numValid = m_numSongs;
-        if (m_albumClamp != null && m_albumClamp != "") {
+        if (m_albumClamp != null && !m_albumClamp.equals("")) {
             Album album = m_currentAlbum;
             assert (album.name().equals(m_albumClamp));  // implement random clamping later
             firstValid = album.firstSong();
             numValid = album.numSongs();
-        } else if (m_bandClamp != null && m_bandClamp != "") {
+        } else if (m_bandClamp != null && !m_bandClamp.equals("")) {
             Band band = m_currentBand;
             assert (band.name().equals(m_bandClamp));  // implement random clamping later
             firstValid = band.firstSong();
