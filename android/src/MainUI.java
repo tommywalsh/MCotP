@@ -19,15 +19,19 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
+import android.util.Log;
 
 public class MainUI extends Activity {
     
@@ -91,7 +95,8 @@ public class MainUI extends Activity {
                     m_engineConnection, Context.BIND_AUTO_CREATE);
 	bindService(new Intent(IProvider.class.getName()),
                     m_providerConnection, Context.BIND_AUTO_CREATE);
-	
+
+	testMedia();
     }
 
 
@@ -108,6 +113,24 @@ public class MainUI extends Activity {
 	super.onStart();
     }
 
+    private void testMedia() {
+
+	// These are the column IDs we wish to retrieve from the database
+	String[] proj = {MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST};
+	// This URI points to the "Artists" table
+	String uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
+
+	// Arguments are: table, columns, WHERE clause, WHERE arguments, ORDER clause
+	Cursor cursor = managedQuery(uri, proj, null, null, null);
+	
+	cursor.moveToFirst();
+	while(!cursor.isLast()) {
+	    String id = cursor.getString(0);
+	    String artist = cursor.getString(1);
+	    Log.d("MCOTP", id + ": " + artist);
+	    cursor.moveToNext();
+	}	   			
+    }
     
 
     private ServiceConnection m_engineConnection = new ServiceConnection() {
