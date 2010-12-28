@@ -325,19 +325,11 @@ public class Backend extends Service {
 		    notifyChange(true, false);
 		    break;
 		case TOGGLE_BAND_LOCKING_MSG:
-		    if (m_songProvider.isBandClamped()) {
-			m_songProvider.setBandClamp(null);
-		    } else {
-			m_songProvider.setBandClamp(m_song.bandName());
-		    }
+		    m_songProvider.toggleBandClamp();
 		    notifyChange(false, true);
 		    break;
 		case TOGGLE_ALBUM_LOCKING_MSG:
-		    if (m_songProvider.isAlbumClamped()) {
-			m_songProvider.setAlbumClamp(null, null);
-		    } else {
-			m_songProvider.setAlbumClamp(m_song.bandName(), m_song.albumName());
-		    }
+		    m_songProvider.toggleAlbumClamp();
 		    notifyChange(false, true);
 		    break;
 		case TOGGLE_SHUFFLING_MSG:

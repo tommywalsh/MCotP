@@ -120,6 +120,31 @@ public class MainUI extends Activity {
 	asp.advanceSong();
 	s = asp.getCurrentSong();
 	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
+	asp.toggleRandom();
+	asp.advanceSong();
+	s = asp.getCurrentSong();
+	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
+
+	asp.toggleBandClamp();
+	asp.advanceSong();
+	s = asp.getCurrentSong();
+	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
+
+	asp.toggleBandClamp();
+	asp.advanceSong();
+	s = asp.getCurrentSong();
+	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
+
+	asp.toggleAlbumClamp();
+	asp.advanceSong();
+	s = asp.getCurrentSong();
+	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
+
+	asp.toggleAlbumClamp();
+	asp.advanceSong();
+	s = asp.getCurrentSong();
+	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
+	
 
     }
     

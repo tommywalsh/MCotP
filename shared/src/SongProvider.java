@@ -8,9 +8,8 @@ public interface SongProvider
     public void advanceSong();
     public void toggleRandom();
     public boolean isRandom();
-    public void setGenreClamp(String genreClamp);
-    public void setBandClamp(String band);
-    public void setAlbumClamp(String band, String album);
+    public void toggleBandClamp();
+    public void toggleAlbumClamp();
     public boolean isBandClamped();
     public boolean isAlbumClamped();
 }

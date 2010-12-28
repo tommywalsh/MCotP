@@ -120,20 +120,18 @@ public class SwingUI extends JPanel implements ActionListener
 	} else if (ac.equals("back")) {
 	    m_engine.restartSong();
 	} else if (ac.equals("lock band")) {
+	    m_engine.toggleBandClamp();
             if (m_bandLockButton.getText().equals("Unlock")) {
                 m_bandLockButton.setText("Lock");
-                m_engine.setClamp(null, null, null);
             } else {                
-                m_engine.setClamp(null, m_bandButton.getText(), null);
                 m_bandLockButton.setText("Unlock");
                 m_albumLockButton.setText("Lock");
             }
         } else if (ac.equals("lock album")) {
+	    m_engine.toggleAlbumClamp();
             if (m_albumLockButton.getText().equals("Unlock")) {
                 m_albumLockButton.setText("Lock");
-                m_engine.setClamp(null, null, null);
             } else {                
-                m_engine.setClamp(null, m_bandButton.getText(), m_albumButton.getText());
                 m_bandLockButton.setText("Lock");
                 m_albumLockButton.setText("Unlock");
             }

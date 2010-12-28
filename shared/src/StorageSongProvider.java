@@ -56,19 +56,25 @@ public class StorageSongProvider implements Serializable, SongProvider
     }
 
     // Only serve up songs from a single band
-    public void setBandClamp(String band)
+    public void toggleBandClamp()
     {
-        m_bandClamp = band;
-        m_albumClamp = "";
+	if (m_bandClamp.equals("")) {
+	    m_bandClamp = m_currentBand.name();
+	} else {
+	    m_bandClamp = "";
+	}
     }
 
-    // Only serve up songs from a single album
-    public void setAlbumClamp(String band, String album)
+    public void toggleAlbumClamp()
     {
-        m_bandClamp = band;
-        m_albumClamp = album;
+	if (m_albumClamp.equals("")) {
+	    m_bandClamp = m_currentBand.name();
+	    m_albumClamp = m_currentAlbum.name();
+	} else {
+	    m_bandClamp = "";
+	    m_albumClamp = "";
+	}
     }
-
     public boolean isBandClamped()
     {
 	return !isAlbumClamped() && (m_bandClamp != null && !m_bandClamp.equals(""));
