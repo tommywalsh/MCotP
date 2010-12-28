@@ -15,12 +15,10 @@ import java.util.Iterator;
 // object, and relays/translates them to an Android MediaPlayer object
 public class AndroidPlayer implements Player
 {
-    StorageProvider m_storage;
 
     private HashSet<Player.SongFinishedListener> m_listeners = new HashSet<Player.SongFinishedListener>();
 
-    AndroidPlayer(StorageProvider sp) {
-	m_storage = sp;
+    AndroidPlayer() {
 	m_player = new MediaPlayer();
 	m_player.setOnCompletionListener(new CListener());
     }
@@ -53,7 +51,6 @@ public class AndroidPlayer implements Player
 	m_player.reset();
 	try {
 	    m_player.setDataSource(song.songName());
-	    //	    m_player.setDataSource(m_storage.getSongPath(song));
 	    m_player.prepare();
 	} catch (java.io.IOException e) {
 	}

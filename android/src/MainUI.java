@@ -96,7 +96,6 @@ public class MainUI extends Activity {
 	bindService(new Intent(IProvider.class.getName()),
                     m_providerConnection, Context.BIND_AUTO_CREATE);
 
-	testMedia();
     }
 
 
@@ -112,42 +111,6 @@ public class MainUI extends Activity {
     protected void onStart() {
 	super.onStart();
     }
-
-    private void testMedia() {
-	AndroidSongProvider asp = new AndroidSongProvider(getContentResolver());
-	Song s = asp.getCurrentSong();
-	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
-	asp.advanceSong();
-	s = asp.getCurrentSong();
-	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
-	asp.toggleRandom();
-	asp.advanceSong();
-	s = asp.getCurrentSong();
-	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
-
-	asp.toggleBandClamp();
-	asp.advanceSong();
-	s = asp.getCurrentSong();
-	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
-
-	asp.toggleBandClamp();
-	asp.advanceSong();
-	s = asp.getCurrentSong();
-	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
-
-	asp.toggleAlbumClamp();
-	asp.advanceSong();
-	s = asp.getCurrentSong();
-	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
-
-	asp.toggleAlbumClamp();
-	asp.advanceSong();
-	s = asp.getCurrentSong();
-	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
-	
-
-    }
-    
 
     private ServiceConnection m_engineConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className,
