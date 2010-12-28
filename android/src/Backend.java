@@ -56,7 +56,8 @@ import android.util.Log;
 
 public class Backend extends Service {
 
-    StorageSongProvider m_songProvider;
+    //    StorageSongProvider m_songProvider;
+    SongProvider m_songProvider;
     Engine m_engine;
     Song m_song;
 
@@ -116,8 +117,9 @@ public class Backend extends Service {
     // Loading the song provider gets broken out into its own function.
     // This is a somewhat complicated process because we want to speed up
     // loading times
-    private StorageSongProvider loadProvider(StorageProvider sp) {
-
+    //    private StorageSongProvider loadProvider(StorageProvider sp) {
+    private AndroidSongProvider loadProvider(StorageProvider sp) {
+	/*
 	StorageSongProvider songProvider = null;
 
 	// First, try to find a serialized version of the provider from storage
@@ -155,8 +157,9 @@ public class Backend extends Service {
 
 	    saveState(songProvider);
 	}
-
-	return songProvider;
+*/
+	return new AndroidSongProvider(getContentResolver());
+	//	return songProvider;
     }
 
     private void saveState(StorageSongProvider sp) {
@@ -186,7 +189,7 @@ public class Backend extends Service {
     public void onDestroy() {
 	super.onDestroy();
 
-	saveState(m_songProvider);
+	//	saveState(m_songProvider);
 
         mCallbacks.kill();
 

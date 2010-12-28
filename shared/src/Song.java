@@ -58,7 +58,7 @@ public class Song
     public String songName() {
         return m_songFile;
     }
-    
+
     private static Pattern s_extRE = Pattern.compile("\\..*$");
     private static Pattern s_idxRE = Pattern.compile("^\\d+ *- *");
     public String songDisplayName() {

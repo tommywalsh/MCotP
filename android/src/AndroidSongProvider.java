@@ -2,6 +2,7 @@ package com.github.tommywalsh.mcotp;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.content.ContentResolver;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio;
@@ -12,7 +13,7 @@ import android.util.Log;
 
 public class AndroidSongProvider implements SongProvider
 {
-    private Activity m_queryProvider;
+    private ContentResolver m_queryProvider;
     private Cursor m_cursor = null;
     private Random m_random = new Random();
     private boolean m_isRandom = false;
@@ -50,12 +51,12 @@ public class AndroidSongProvider implements SongProvider
 	}
 
 
-	m_cursor = m_queryProvider.managedQuery(uri, proj, whereClause, whereArgs, null);
+	m_cursor = m_queryProvider.query(uri, proj, whereClause, whereArgs, null);
 	
 	Log.d("MCOTP", new Integer(m_cursor.getCount()).toString() + " songs in DB");
     }
     
-    public AndroidSongProvider(Activity queryProvider) {
+    public AndroidSongProvider(ContentResolver queryProvider) {
 	m_queryProvider = queryProvider;
 	loadQuery();
 	advanceSong();

@@ -52,7 +52,8 @@ public class AndroidPlayer implements Player
     public void setSong(Song song) {
 	m_player.reset();
 	try {
-	    m_player.setDataSource(m_storage.getSongPath(song));
+	    m_player.setDataSource(song.songName());
+	    //	    m_player.setDataSource(m_storage.getSongPath(song));
 	    m_player.prepare();
 	} catch (java.io.IOException e) {
 	}

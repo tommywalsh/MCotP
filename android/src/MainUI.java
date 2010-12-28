@@ -114,7 +114,7 @@ public class MainUI extends Activity {
     }
 
     private void testMedia() {
-	AndroidSongProvider asp = new AndroidSongProvider(this);
+	AndroidSongProvider asp = new AndroidSongProvider(getContentResolver());
 	Song s = asp.getCurrentSong();
 	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
 	asp.advanceSong();
