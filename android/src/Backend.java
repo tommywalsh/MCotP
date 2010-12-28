@@ -56,7 +56,7 @@ import android.util.Log;
 
 public class Backend extends Service {
 
-    SongProvider m_songProvider;
+    StorageSongProvider m_songProvider;
     Engine m_engine;
     Song m_song;
 
@@ -116,9 +116,9 @@ public class Backend extends Service {
     // Loading the song provider gets broken out into its own function.
     // This is a somewhat complicated process because we want to speed up
     // loading times
-    private SongProvider loadProvider(StorageProvider sp) {
+    private StorageSongProvider loadProvider(StorageProvider sp) {
 
-	SongProvider songProvider = null;
+	StorageSongProvider songProvider = null;
 
 	// First, try to find a serialized version of the provider from storage
 	Log.d(TAG, "Looking for cached file");
@@ -126,7 +126,7 @@ public class Backend extends Service {
 	    FileInputStream fis = openFileInput(FILENAME);
 	    ObjectInputStream ois = new ObjectInputStream(fis);
 	    Object o = ois.readObject();
-	    songProvider = (SongProvider)(o);
+	    songProvider = (StorageSongProvider)(o);
 	    fis.close();
 	    if (songProvider != null) {
 		Log.d(TAG, "Got song provider");
@@ -148,7 +148,7 @@ public class Backend extends Service {
 
 	// If loading was unsuccessful, load it from scratch
 	if (songProvider == null) {
-	    songProvider = new SongProvider(sp);
+	    songProvider = new StorageSongProvider(sp);
 
 	    Log.d(TAG, "Constructing from scratch");
 	    songProvider.constructLibrary();
@@ -159,7 +159,7 @@ public class Backend extends Service {
 	return songProvider;
     }
 
-    private void saveState(SongProvider sp) {
+    private void saveState(StorageSongProvider sp) {
 	try {
 	    Log.d(TAG, "Trying to save to " + getFilesDir());
 	    FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);

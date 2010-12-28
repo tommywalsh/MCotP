@@ -144,14 +144,14 @@ public class SwingUI extends JPanel implements ActionListener
     private static void runGUIApp(String path) {
 
 	PosixStorageProvider psp = new PosixStorageProvider(path);
-	SongProvider sp = null;
+	StorageSongProvider sp = null;
 
 	File f = new File("/home/tom/.mcotp");
 	try {
 	    if (f.canRead()) {
 		FileInputStream fis = new FileInputStream(f);
 		ObjectInputStream ois = new ObjectInputStream(fis);
-		sp = (SongProvider)(ois.readObject());
+		sp = (StorageSongProvider)(ois.readObject());
 		sp.initAfterDeserialization(psp);
 	    }
 
@@ -163,7 +163,7 @@ public class SwingUI extends JPanel implements ActionListener
 	}
 
 	if (sp == null) {
-	    sp = new SongProvider(psp);
+	    sp = new StorageSongProvider(psp);
 	    sp.constructLibrary();
 	    try {
 		f.createNewFile();
