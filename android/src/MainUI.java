@@ -115,23 +115,12 @@ public class MainUI extends Activity {
 
     private void testMedia() {
 	AndroidSongProvider asp = new AndroidSongProvider(this);
-	/*
-	// These are the column IDs we wish to retrieve from the database
-	String[] proj = {MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST};
-	// This URI points to the "Artists" table
-	//	String uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
-	android.net.Uri uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
+	Song s = asp.getCurrentSong();
+	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
+	asp.advanceSong();
+	s = asp.getCurrentSong();
+	Log.d("MCOTP", "Current song is: " + s.bandName() + ", " + s.albumName() + ": " + s.songName());
 
-	// Arguments are: table, columns, WHERE clause, WHERE arguments, ORDER clause
-	Cursor cursor = managedQuery(uri, proj, null, null, null);
-	
-	cursor.moveToFirst();
-	while(!cursor.isLast()) {
-	    String id = cursor.getString(0);
-	    String artist = cursor.getString(1);
-	    Log.d("MCOTP", id + ": " + artist);
-	    cursor.moveToNext();
-	    }	*/   			
     }
     
 
