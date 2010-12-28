@@ -112,5 +112,5 @@ public class AndroidSongProvider implements SongProvider
     }
 
     public boolean isBandClamped() {return (m_clamp == Clamp.BAND);}
-    public boolean isAlbumClamped() {return (m_clamp == Clamp.BAND);}
+    public boolean isAlbumClamped() {return (m_clamp == Clamp.ALBUM);}
 }
