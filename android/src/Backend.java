@@ -60,19 +60,6 @@ public class Backend extends Service {
     Engine m_engine;
     Song m_song;
 
-    // can be removed later
-    NotificationManager mNM;
-    private void showNotification() {
-        CharSequence text = getText(R.string.remote_service_started);
-        Notification notification = new Notification(R.drawable.stat_sample, text,
-                System.currentTimeMillis());
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainUI.class), 0);
-        notification.setLatestEventInfo(this, getText(R.string.remote_service_label),
-                       text, contentIntent);
-	mNM.notify(R.string.remote_service_started, notification);
-    }
-
 
     ///////////////////// SETUP CODE ////////////////////////////////
 
@@ -106,38 +93,28 @@ public class Backend extends Service {
     }
 
 
-    private static final String TAG = "MCotP/Backend";
-    private static final String FILENAME = "song_provider";
-
-
     // Loading the song provider gets broken out into its own function.
     // In future, we want to cache the provider's state, rather than create
     // a new one from scratch
     private AndroidSongProvider loadProvider() {
 	return new AndroidSongProvider(getContentResolver());
     }
+    /*
     private void saveProvider(AndroidSongProvider sp) {
 	
 	try {
-	    Log.d(TAG, "Trying to save to " + getFilesDir());
 	    FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
 	    ObjectOutputStream oos = new ObjectOutputStream(fos);
 	    oos.writeObject(sp);
 	    fos.close();
 	} catch (java.io.FileNotFoundException e) {
-	    Log.d(TAG, "Can't find output file");
 	} catch (java.io.IOException e) {
-	    Log.d(TAG, "Can't write output file");
 	}	
-    }
+	}*/
 
     @Override
     public void onCreate() {
 	initializeGenericComponents();
-
-	// Can be removed later
-        mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        showNotification();        
     }
 
     @Override
@@ -147,9 +124,6 @@ public class Backend extends Service {
 	//	saveProvider(m_songProvider);
 
         mCallbacks.kill();
-
-	// Can be removed later
-        mNM.cancel(R.string.remote_service_started);
     }
 
     ///////////////////// END SETUP CODE ////////////////////////////////

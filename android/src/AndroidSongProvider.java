@@ -54,8 +54,6 @@ public class AndroidSongProvider implements SongProvider
 
 
 	m_cursor = m_queryProvider.query(uri, proj, whereClause, whereArgs, null);
-	
-	Log.d("MCOTP", new Integer(m_cursor.getCount()).toString() + " songs in DB");
     }
     
     public AndroidSongProvider(ContentResolver queryProvider) {
