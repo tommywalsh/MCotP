@@ -84,11 +84,11 @@ public class StorageSongProvider implements Serializable, SongProvider
 	return (m_albumClamp != null && !m_albumClamp.equals(""));
     }
 
-    public StorageSongProvider(StorageProvider sp) {
+    public StorageSongProvider(PosixStorageProvider sp) {
 	m_storage = sp;
     }
 
-    public void initAfterDeserialization(StorageProvider sp) {
+    public void initAfterDeserialization(PosixStorageProvider sp) {
 	m_storage = sp;
 	m_random = new Random();
 
@@ -110,7 +110,7 @@ public class StorageSongProvider implements Serializable, SongProvider
 
 
 
-    transient private StorageProvider m_storage;
+    transient private PosixStorageProvider m_storage;
     
     transient private TreeMap<Integer, Integer> m_indexToBand; 
     private Vector<Band> m_allBands;

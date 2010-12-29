@@ -13,9 +13,9 @@ public class SoxPlayer implements Player, ExecThread.FinishedListener
     private ExecThread m_thread;
     private Song m_song;
     private HashSet<Player.SongFinishedListener> m_listeners = new HashSet<Player.SongFinishedListener>();
-    private StorageProvider m_storage;
+    private PosixStorageProvider m_storage;
 
-    SoxPlayer(StorageProvider sp) {
+    SoxPlayer(PosixStorageProvider sp) {
 	m_storage = sp;
     }
 
