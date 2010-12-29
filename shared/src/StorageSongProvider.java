@@ -23,7 +23,7 @@ public class StorageSongProvider implements Serializable, SongProvider
 	if (m_currentAlbum != null) {
 	    albumName = m_currentAlbum.name();
 	}
-	return new Song(m_currentBand.name(), albumName, m_currentSong);
+	return new PosixSong(m_storage.getLibraryPath(), m_currentBand.name(), albumName, m_currentSong);
     }
 
     public void advanceSong() {

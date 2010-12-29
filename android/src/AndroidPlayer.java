@@ -50,7 +50,7 @@ public class AndroidPlayer implements Player
     public void setSong(Song song) {
 	m_player.reset();
 	try {
-	    m_player.setDataSource(song.songName());
+	    m_player.setDataSource(song.uri());
 	    m_player.prepare();
 	} catch (java.io.IOException e) {
 	}

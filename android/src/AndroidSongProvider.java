@@ -29,7 +29,9 @@ public class AndroidSongProvider implements SongProvider
 			 MediaStore.Audio.AudioColumns.ARTIST, 
 			 MediaStore.Audio.AudioColumns.ARTIST_ID, 
 			 MediaStore.MediaColumns.DATA,
-			 BaseColumns._ID};
+			 BaseColumns._ID,
+			 MediaStore.MediaColumns.TITLE
+	};
 	
 	android.net.Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 	
@@ -69,9 +71,10 @@ public class AndroidSongProvider implements SongProvider
 	return m_song;
     }
     private void storeSong() {
-	m_song = new Song(m_cursor.getString(2),
-			m_cursor.getString(0),
-			m_cursor.getString(4));
+	m_song = new AndroidSong(m_cursor.getString(4),
+				 m_cursor.getString(2),
+				 m_cursor.getString(0),
+				 m_cursor.getString(6));
     }
     private void advanceSequential() {
 	m_cursor.moveToNext();
