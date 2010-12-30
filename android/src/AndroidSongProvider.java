@@ -18,6 +18,7 @@ public class AndroidSongProvider implements SongProvider
     private Random m_random = new Random();
     private boolean m_isRandom = false;
     private Song m_song;
+    private Integer m_songId = null;
 
     private enum Clamp { NONE, BAND, ALBUM}
 
@@ -52,8 +53,19 @@ public class AndroidSongProvider implements SongProvider
 	    }
 	}
 
-
 	m_cursor = m_queryProvider.query(uri, proj, whereClause, whereArgs, null);
+
+	
+	if (m_songId != null) {
+	    // This is a ridiculously inefficient search!
+	    m_cursor.moveToFirst();
+	    while (!m_cursor.isAfterLast() && m_cursor.getInt(5) != m_songId) {
+		m_cursor.moveToNext();
+	    }
+	    if (m_cursor.isAfterLast()) {
+		m_cursor.moveToFirst();
+	    }
+	}
     }
     
     public AndroidSongProvider(ContentResolver queryProvider) {
@@ -73,6 +85,7 @@ public class AndroidSongProvider implements SongProvider
 				 m_cursor.getString(2),
 				 m_cursor.getString(0),
 				 m_cursor.getString(6));
+	m_songId = m_cursor.getInt(5);
     }
     private void advanceSequential() {
 	m_cursor.moveToNext();
