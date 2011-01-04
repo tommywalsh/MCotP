@@ -29,6 +29,8 @@ import java.io.ObjectInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import android.content.Context;
+import android.content.IntentFilter;
+import android.media.AudioManager;
 
 import android.util.Log;
 
@@ -76,9 +78,22 @@ public class Backend extends Service {
 
     ///////////////////// SETUP CODE ////////////////////////////////
 
+
+    // Stop playing if the headphone plug is pulled
+    private class PlugPulledReceiver extends android.content.BroadcastReceiver
+    {
+        public void onReceive(Context context, Intent intent) {
+            if (m_engine.isPlaying()) {
+                m_engine.togglePlayPause();                
+            }
+        }
+    };
+
+
     @Override
     public void onStart(Intent intent, int startId) {
 	setForeground(true);
+        registerReceiver(new PlugPulledReceiver(), new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
     }
 
     // uncomment for API-5 and higher (1.5 is API-3)
