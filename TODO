@@ -1,0 +1,41 @@
+
+PRETTY BUTTONS
+- padlock (locked and unlocked)
+- play/pause, prev, next (using triangles and rectangles)
+- shuffle button using dice and arrow/list
+
+
+
+ADD FOUR "MODES"
+
+1) ALL RANDOM MODE
+ - shuffle button hidden (always on shuffle)
+ - previous button hidden (no unshuffling)
+ - band lock button goes to BAND RANDOM MODE
+ - album lock button goes to ALBUM SEQUENTIAL MODE
+
+2) BAND RANDOM MODE
+ - shuffle button enabled (toggles to BAND SEQUENTIAL MODE)
+ - previous button hidden
+ - band unlock button goes to ALL RANDOM MODE
+ - album lock button goes to ALBUM SEQUENTIAL MODE
+
+3) BAND SEQUENTIAL MODE
+ - same as BAND RANDOM, except does not shuffle, and previous button enabled
+
+4) ALBUM SEQUENTIAL MODE
+ - shuffle button hidden (never shuffles)
+ - previous button enabled
+ - album unlock button goes to BAND RANDOM MODE
+ - band unlock button goes to ALL RANDOM MODE
+
+
+
+MAKE BAND/ALBUM BUTTON BRING UP SELECTION
+
+
+CHANGE SORT ORDER OF QUERIES:
+ - by tracknum when locked on album
+ - by year then tracknum when locked on band
+
+
