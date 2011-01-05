@@ -29,6 +29,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import android.util.Log;
@@ -44,8 +45,8 @@ public class MainUI extends Activity {
     Button m_nextButton;
     Button m_repeatButton;
     Button m_shuffleButton;
-    Button m_bandLockButton;
-    Button m_albumLockButton;
+    ImageButton m_bandLockButton;
+    ImageButton m_albumLockButton;
 
     TextView m_trackText;
     
@@ -87,10 +88,10 @@ public class MainUI extends Activity {
 	m_shuffleButton = (Button)findViewById(R.id.shuffleButton);
 	m_shuffleButton.setOnClickListener(m_shuffleListener);
 
-	m_bandLockButton = (Button)findViewById(R.id.bandLockButton);
+	m_bandLockButton = (ImageButton)findViewById(R.id.bandLockButton);
 	m_bandLockButton.setOnClickListener(m_bandLockListener);
 
-	m_albumLockButton = (Button)findViewById(R.id.albumLockButton);
+	m_albumLockButton = (ImageButton)findViewById(R.id.albumLockButton);
 	m_albumLockButton.setOnClickListener(m_albumLockListener);
 
 	setButtonsEnabled(false);
@@ -315,12 +316,12 @@ public class MainUI extends Activity {
 		m_shuffleButton.setText(pi.shuffling ?
 					R.string.sequential :
 					R.string.random);
-		m_bandLockButton.setText(pi.bandLocked ?
-					R.string.unlock :
-					R.string.lock);
-		m_albumLockButton.setText(pi.albumLocked ?
-					R.string.unlock :
-					R.string.lock);
+                m_bandLockButton.setImageResource(pi.bandLocked ? 
+                                                  R.drawable.locked :
+                                                  R.drawable.unlocked);
+		m_albumLockButton.setImageResource(pi.albumLocked ?
+                                                   R.drawable.locked :
+                                                   R.drawable.unlocked);
 	    default:
 		super.handleMessage(msg);
             }
