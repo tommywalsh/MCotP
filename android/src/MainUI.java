@@ -46,10 +46,11 @@ public class MainUI extends Activity {
     Button m_shuffleButton;
     Button m_bandLockButton;
     Button m_albumLockButton;
-    TextView m_bandText;
-    TextView m_albumText;
-    TextView m_trackText;
 
+    TextView m_trackText;
+    
+    Button m_albumButton;
+    Button m_bandButton;
 
     private void setButtonsEnabled(boolean enabled) {
 	m_toggleButton.setEnabled(enabled);
@@ -58,6 +59,8 @@ public class MainUI extends Activity {
 	m_shuffleButton.setEnabled(enabled);
 	m_bandLockButton.setEnabled(enabled);
 	m_albumLockButton.setEnabled(enabled);
+	m_bandButton.setEnabled(enabled);
+	m_albumButton.setEnabled(enabled);
     }
 
     @Override
@@ -73,11 +76,12 @@ public class MainUI extends Activity {
 	m_nextButton = (Button)findViewById(R.id.skipButton);
 	m_nextButton.setOnClickListener(m_nextListener);
 
-	m_repeatButton = (Button)findViewById(R.id.restartButton);
+	m_repeatButton = (Button)findViewById(R.id.prevButton);
 	m_repeatButton.setOnClickListener(m_repeatListener);
 
-	m_bandText = (TextView)findViewById(R.id.bandText);
-	m_albumText = (TextView)findViewById(R.id.albumText);
+	m_bandButton = (Button)findViewById(R.id.bandNameButton);
+	m_albumButton = (Button)findViewById(R.id.albumNameButton);
+
 	m_trackText = (TextView)findViewById(R.id.songText);
 
 	m_shuffleButton = (Button)findViewById(R.id.shuffleButton);
@@ -302,8 +306,8 @@ public class MainUI extends Activity {
 		m_toggleButton.setText( ei.isPlaying ?
 					R.string.pause :
 					R.string.play );
-		m_bandText.setText(ei.band);
-		m_albumText.setText(ei.album);
+		m_bandButton.setText(ei.band);
+		m_albumButton.setText(ei.album);
 		m_trackText.setText(ei.track);
 		break;
 	    case PROVIDER_UPDATE:
