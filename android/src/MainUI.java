@@ -19,15 +19,19 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
+import android.util.Log;
 
 public class MainUI extends Activity {
     
@@ -91,7 +95,7 @@ public class MainUI extends Activity {
                     m_engineConnection, Context.BIND_AUTO_CREATE);
 	bindService(new Intent(IProvider.class.getName()),
                     m_providerConnection, Context.BIND_AUTO_CREATE);
-	
+
     }
 
 
@@ -107,8 +111,6 @@ public class MainUI extends Activity {
     protected void onStart() {
 	super.onStart();
     }
-
-    
 
     private ServiceConnection m_engineConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className,

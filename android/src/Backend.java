@@ -41,10 +41,10 @@ import android.util.Log;
 /// Android-specific
 ///
 /// It has the following main responsibilites:
-///   1) Manage the lifetime of "Engine" and "SongProvider" objects 
-///       (which know nothing about Android)
-///   2) Set up a "StorageProvider" pointing at the Android music collection
-///       and allow Engine and SongProvider to access it
+///   1) Set up and manage the lifetimes of "SongProvider" and "Player"
+///      objects (which are specific to Android) and an "Engine" object
+///      (which knows nothing about Android).
+///   2) Connect Engine to its SongProvider and Player.
 ///   3) When Engine/SongProvider change state, send notifications to any UIs 
 ///       that have registered an interest
 ///   4) Receive commands sent from UIs, and forward them to Engine or
@@ -58,22 +58,9 @@ import android.util.Log;
 
 public class Backend extends Service {
 
-    SongProvider m_songProvider;
+    AndroidSongProvider m_songProvider;
     Engine m_engine;
     Song m_song;
-
-    // can be removed later
-    NotificationManager mNM;
-    private void showNotification() {
-        CharSequence text = getText(R.string.remote_service_started);
-        Notification notification = new Notification(R.drawable.stat_sample, text,
-                System.currentTimeMillis());
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainUI.class), 0);
-        notification.setLatestEventInfo(this, getText(R.string.remote_service_label),
-                       text, contentIntent);
-	mNM.notify(R.string.remote_service_started, notification);
-    }
 
 
     ///////////////////// SETUP CODE ////////////////////////////////
@@ -104,15 +91,12 @@ public class Backend extends Service {
 	return START_STICKY;
 	}*/
     // Here we need to get the generic (that is, not Android-specific) 
-    // Engine and SongProvider objects set up, and provide it with a
-    // StorageProvider adapter that knows how to access music on an 
-    // Android device
+    // Engine set up and give it an Android-specific SongProvider
     private void initializeGenericComponents() {
 
 	// set up the objects
-	StorageProvider sp = new PosixStorageProvider("/sdcard/music");
-	Player player = new AndroidPlayer(sp);
-	m_songProvider = loadProvider(sp);
+	Player player = new AndroidPlayer();
+	m_songProvider = loadProvider();
 	m_engine = new Engine(m_songProvider, player);
 	
 	// register for updates so we can relay them to UIs
@@ -124,89 +108,37 @@ public class Backend extends Service {
     }
 
 
-    private static final String TAG = "MCotP/Backend";
-    private static final String FILENAME = "song_provider";
-
-
     // Loading the song provider gets broken out into its own function.
-    // This is a somewhat complicated process because we want to speed up
-    // loading times
-    private SongProvider loadProvider(StorageProvider sp) {
-
-	SongProvider songProvider = null;
-
-	// First, try to find a serialized version of the provider from storage
-	Log.d(TAG, "Looking for cached file");
-	try {
-	    FileInputStream fis = openFileInput(FILENAME);
-	    ObjectInputStream ois = new ObjectInputStream(fis);
-	    Object o = ois.readObject();
-	    songProvider = (SongProvider)(o);
-	    fis.close();
-	    if (songProvider != null) {
-		Log.d(TAG, "Got song provider");
-		songProvider.initAfterDeserialization(sp);
-	    } else {
-		Log.d(TAG, "Did not get song provider");
-	    }
-	}
-	// No need to do anything about these exceptions,
-	// just construct the library from scratch
-	catch (java.io.FileNotFoundException e) {
-	    Log.d(TAG, "No cached file");
-	} catch (java.io.IOException e) {
-	    Log.d(TAG, "Can't read cached file");
-	} catch (java.lang.ClassNotFoundException e) {
-	    Log.d(TAG, "Can't deserialize");
-	}
-
-
-	// If loading was unsuccessful, load it from scratch
-	if (songProvider == null) {
-	    songProvider = new SongProvider(sp);
-
-	    Log.d(TAG, "Constructing from scratch");
-	    songProvider.constructLibrary();
-
-	    saveState(songProvider);
-	}
-
-	return songProvider;
+    // In future, we want to cache the provider's state, rather than create
+    // a new one from scratch
+    private AndroidSongProvider loadProvider() {
+	return new AndroidSongProvider(getContentResolver());
     }
-
-    private void saveState(SongProvider sp) {
+    /*
+    private void saveProvider(AndroidSongProvider sp) {
+	
 	try {
-	    Log.d(TAG, "Trying to save to " + getFilesDir());
 	    FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
 	    ObjectOutputStream oos = new ObjectOutputStream(fos);
 	    oos.writeObject(sp);
 	    fos.close();
 	} catch (java.io.FileNotFoundException e) {
-	    Log.d(TAG, "Can't find output file");
 	} catch (java.io.IOException e) {
-	    Log.d(TAG, "Can't write output file");
 	}	
-    }
+	}*/
 
     @Override
     public void onCreate() {
 	initializeGenericComponents();
-
-	// Can be removed later
-        mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        showNotification();        
     }
 
     @Override
     public void onDestroy() {
 	super.onDestroy();
 
-	saveState(m_songProvider);
+	//	saveProvider(m_songProvider);
 
         mCallbacks.kill();
-
-	// Can be removed later
-        mNM.cancel(R.string.remote_service_started);
     }
 
     ///////////////////// END SETUP CODE ////////////////////////////////
@@ -340,19 +272,11 @@ public class Backend extends Service {
 		    notifyChange(true, false);
 		    break;
 		case TOGGLE_BAND_LOCKING_MSG:
-		    if (m_songProvider.isBandClamped()) {
-			m_songProvider.setBandClamp(null);
-		    } else {
-			m_songProvider.setBandClamp(m_song.bandName());
-		    }
+		    m_songProvider.toggleBandClamp();
 		    notifyChange(false, true);
 		    break;
 		case TOGGLE_ALBUM_LOCKING_MSG:
-		    if (m_songProvider.isAlbumClamped()) {
-			m_songProvider.setAlbumClamp(null, null);
-		    } else {
-			m_songProvider.setAlbumClamp(m_song.bandName(), m_song.albumName());
-		    }
+		    m_songProvider.toggleAlbumClamp();
 		    notifyChange(false, true);
 		    break;
 		case TOGGLE_SHUFFLING_MSG:

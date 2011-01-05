@@ -5,7 +5,7 @@ import java.io.File;
 import java.util.Vector;
 import java.util.Arrays;
 
-public class PosixStorageProvider implements StorageProvider
+public class PosixStorageProvider
 {
     private String m_root;
 

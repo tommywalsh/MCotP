@@ -52,20 +52,13 @@ public class Engine
 	return m_provider.isRandom();
     }
 
-    public void setClamp(String genreClamp, String bandClamp, String albumClamp) {
-	if (albumClamp != null) {
-	    assert bandClamp != null;
-	    m_provider.setAlbumClamp(bandClamp, albumClamp);
-	} else if (bandClamp != null) {
-	    m_provider.setBandClamp(bandClamp);
-	} else {
-	    assert genreClamp != null;
-	    m_provider.setGenreClamp(genreClamp);
-	}
-	Song song = m_provider.getCurrentSong();
-	if (!song.equals(m_currentSong)) {
-	    nextSong();
-	}
+    public void toggleBandClamp()
+    {
+	m_provider.toggleBandClamp();
+    }
+    public void toggleAlbumClamp()
+    {
+	m_provider.toggleAlbumClamp();
     }
 
     public void play() {

@@ -120,20 +120,18 @@ public class SwingUI extends JPanel implements ActionListener
 	} else if (ac.equals("back")) {
 	    m_engine.restartSong();
 	} else if (ac.equals("lock band")) {
+	    m_engine.toggleBandClamp();
             if (m_bandLockButton.getText().equals("Unlock")) {
                 m_bandLockButton.setText("Lock");
-                m_engine.setClamp(null, null, null);
             } else {                
-                m_engine.setClamp(null, m_bandButton.getText(), null);
                 m_bandLockButton.setText("Unlock");
                 m_albumLockButton.setText("Lock");
             }
         } else if (ac.equals("lock album")) {
+	    m_engine.toggleAlbumClamp();
             if (m_albumLockButton.getText().equals("Unlock")) {
                 m_albumLockButton.setText("Lock");
-                m_engine.setClamp(null, null, null);
             } else {                
-                m_engine.setClamp(null, m_bandButton.getText(), m_albumButton.getText());
                 m_bandLockButton.setText("Lock");
                 m_albumLockButton.setText("Unlock");
             }
@@ -144,14 +142,14 @@ public class SwingUI extends JPanel implements ActionListener
     private static void runGUIApp(String path) {
 
 	PosixStorageProvider psp = new PosixStorageProvider(path);
-	SongProvider sp = null;
+	StorageSongProvider sp = null;
 
 	File f = new File("/home/tom/.mcotp");
 	try {
 	    if (f.canRead()) {
 		FileInputStream fis = new FileInputStream(f);
 		ObjectInputStream ois = new ObjectInputStream(fis);
-		sp = (SongProvider)(ois.readObject());
+		sp = (StorageSongProvider)(ois.readObject());
 		sp.initAfterDeserialization(psp);
 	    }
 
@@ -163,7 +161,7 @@ public class SwingUI extends JPanel implements ActionListener
 	}
 
 	if (sp == null) {
-	    sp = new SongProvider(psp);
+	    sp = new StorageSongProvider(psp);
 	    sp.constructLibrary();
 	    try {
 		f.createNewFile();
