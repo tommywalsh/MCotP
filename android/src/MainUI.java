@@ -47,11 +47,62 @@ public class MainUI extends Activity {
     Button m_shuffleButton;
     ImageButton m_bandLockButton;
     ImageButton m_albumLockButton;
-
-    TextView m_trackText;
-    
+    TextView m_trackText;    
     Button m_albumButton;
     Button m_bandButton;
+
+
+    // This should be reworked.  Helper classes here are ugly.
+    class EngineInfo {
+	public boolean isPlaying;
+	public String album;
+	public String band;
+	public String track;
+    }
+
+    class ProviderInfo {
+	public boolean shuffling;
+	public boolean bandLocked;
+	public boolean albumLocked;
+    }
+
+    ProviderInfo m_cachedProviderInfo;
+	    
+
+
+
+    // For simplicity's sake, we'll just have a few discrete modes
+    // at least for now
+    enum Mode {
+        ALL_RANDOM,
+        BAND_RANDOM,
+        BAND_SEQUENTIAL,
+        ALBUM_SEQUENTIAL
+    }
+    Mode m_currentMode;
+
+    private void enterAllRandomMode() {
+        if (m_cachedProviderInfo != null) {
+            try {
+                if (!m_cachedProviderInfo.shuffling) {
+                    m_provider.toggleShuffling();
+                }
+                if (m_cachedProviderInfo.bandLocked) {
+                    m_provider.toggleBandLocking();
+                }
+                if (m_cachedProviderInfo.albumLocked) {
+                    m_provider.toggleAlbumLocking();
+                }
+            } catch (android.os.RemoteException e) {
+                // do nothing
+            }
+        }
+        m_shuffleButton.setVisibility(android.view.View.INVISIBLE);
+        m_currentMode = Mode.ALL_RANDOM;
+    }
+
+    
+
 
     private void setButtonsEnabled(boolean enabled) {
 	m_toggleButton.setEnabled(enabled);
@@ -253,20 +304,6 @@ public class MainUI extends Activity {
 
 
 
-    // This should be reworked.  Helper classes here are ugly.
-    class EngineInfo {
-	public boolean isPlaying;
-	public String album;
-	public String band;
-	public String track;
-    }
-
-    class ProviderInfo {
-	public boolean shuffling;
-	public boolean bandLocked;
-	public boolean albumLocked;
-    }
-	    
 
     // Updates from the backend
     private IStatusCallback mCallback = new IStatusCallback.Stub() {
@@ -322,6 +359,7 @@ public class MainUI extends Activity {
 		m_albumLockButton.setImageResource(pi.albumLocked ?
                                                    R.drawable.locked :
                                                    R.drawable.unlocked);
+                m_cachedProviderInfo = pi;
 	    default:
 		super.handleMessage(msg);
             }
