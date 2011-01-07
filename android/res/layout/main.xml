@@ -73,25 +73,25 @@
      />
 
 
-  <Button
+  <ImageButton
      android:id="@+id/skipButton"
      android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
      android:layout_alignParentBottom="true"
      android:layout_alignParentRight="true"
-     android:text="Next"
+     android:src="@drawable/forward"
      />
 
-  <Button
+  <ImageButton
      android:id="@+id/prevButton"
      android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
      android:layout_alignParentBottom="true"
      android:layout_alignParentLeft="true"
-     android:text="Prev"
+     android:src="@drawable/backward"
      />
 
-  <Button
+  <ImageButton
      android:id="@+id/playPauseButton"
      android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
@@ -99,7 +99,6 @@
      android:layout_centerHorizontal="true"
      android:layout_toLeftOf="@id/skipButton"
      android:layout_toRightOf="@id/prevButton"
-     android:text="Play"
      />
 
 

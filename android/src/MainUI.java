@@ -41,9 +41,9 @@ public class MainUI extends Activity {
     IProvider m_provider = null;
 
     // On-screen widgets
-    Button m_toggleButton;
-    Button m_nextButton;
-    Button m_repeatButton;
+    ImageButton m_playPauseButton;
+    ImageButton m_nextButton;
+    ImageButton m_repeatButton;
     Button m_shuffleButton;
     ImageButton m_bandLockButton;
     ImageButton m_albumLockButton;
@@ -105,7 +105,7 @@ public class MainUI extends Activity {
 
 
     private void setButtonsEnabled(boolean enabled) {
-	m_toggleButton.setEnabled(enabled);
+	m_playPauseButton.setEnabled(enabled);
 	m_nextButton.setEnabled(enabled);
 	m_repeatButton.setEnabled(enabled);
 	m_shuffleButton.setEnabled(enabled);
@@ -122,13 +122,13 @@ public class MainUI extends Activity {
         setContentView(R.layout.main);
 	
 	// Find and store the buttons, and set up their callbacks
-	m_toggleButton = (Button)findViewById(R.id.playPauseButton);
-	m_toggleButton.setOnClickListener(m_toggleListener);
+	m_playPauseButton = (ImageButton)findViewById(R.id.playPauseButton);
+	m_playPauseButton.setOnClickListener(m_toggleListener);
 
-	m_nextButton = (Button)findViewById(R.id.skipButton);
+	m_nextButton = (ImageButton)findViewById(R.id.skipButton);
 	m_nextButton.setOnClickListener(m_nextListener);
 
-	m_repeatButton = (Button)findViewById(R.id.prevButton);
+	m_repeatButton = (ImageButton)findViewById(R.id.prevButton);
 	m_repeatButton.setOnClickListener(m_repeatListener);
 
 	m_bandButton = (Button)findViewById(R.id.bandNameButton);
@@ -341,9 +341,9 @@ public class MainUI extends Activity {
             switch (msg.what) {
 	    case ENGINE_UPDATE:
 		EngineInfo ei = (EngineInfo)(msg.obj);
-		m_toggleButton.setText( ei.isPlaying ?
-					R.string.pause :
-					R.string.play );
+		m_playPauseButton.setImageResource( ei.isPlaying ?
+                                                    R.drawable.pause :
+                                                    R.drawable.play );
 		m_bandButton.setText(ei.band);
 		m_albumButton.setText(ei.album);
 		m_trackText.setText(ei.track);
