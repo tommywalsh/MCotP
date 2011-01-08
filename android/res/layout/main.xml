@@ -82,6 +82,7 @@
      android:layout_height="wrap_content" 
      android:layout_alignParentBottom="true"
      android:layout_alignParentLeft="true"
+     android:layout_alignTop="@id/skipButton"
      android:src="@drawable/backward"
      />
 
@@ -93,6 +94,7 @@
      android:layout_centerHorizontal="true"
      android:layout_toLeftOf="@id/skipButton"
      android:layout_toRightOf="@id/prevButton"
+     android:layout_alignTop="@id/skipButton"
      />
 
 
