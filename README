@@ -1,16 +1,13 @@
 Music Collection of the People
 
-This is a nascent set of software that will enable playing
+This is a set of software that will enable playing
 music from a local (or locally-mounted) music collection.
-
-The "Naming Convention of the People" must be followed in the
-music library.  More detailed rules will follow, but it basically
-means music is organized in paths like "band/album/song.ext".  For 
-example:
-/path/to/library/Replacements/Pleased to Meet Me/10 - Skyway.mp3
 
 The software is written in Java to make it easier to share between 
 phones and desktops.
+
+Currently, virtually all development is done on the Android app.  The
+desktop program may be broken at any point in time.
 
 There will be three parts: 
 
