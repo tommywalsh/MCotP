@@ -83,6 +83,13 @@ public class AndroidSongProvider implements SongProvider
 	    m_cursor.moveToFirst();
 	}
     }
+    private void previousSequential() {
+	m_cursor.moveToPrevious();
+	if (m_cursor.isBeforeFirst()) {
+	    m_cursor.moveToLast();
+	}
+    }	
+
     private void advanceRandom() {
 	m_cursor.moveToPosition(m_random.nextInt(m_cursor.getCount()));
     }
@@ -95,6 +102,18 @@ public class AndroidSongProvider implements SongProvider
 	}
 	storeSong();
     }
+
+    public void previousSong() {
+	if (isRandom()) {
+	    // if we're in random mode, there's no difference
+	    // between going forward and backward.  So go forward.
+	    advanceRandom();
+	} else {
+	    previousSequential();
+	}
+	storeSong();
+    }
+
     public void toggleRandom() { m_isRandom = !m_isRandom;}
     public boolean isRandom() {return m_isRandom;}
     public void setGenreClamp(String genreClamp) {}

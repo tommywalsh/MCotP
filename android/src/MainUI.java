@@ -43,7 +43,7 @@ public class MainUI extends Activity {
     // On-screen widgets
     ImageButton m_playPauseButton;
     ImageButton m_nextButton;
-    ImageButton m_repeatButton;
+    ImageButton m_backButton;
     ImageButton m_shuffleButton;
     ImageButton m_bandLockButton;
     ImageButton m_albumLockButton;
@@ -118,7 +118,7 @@ public class MainUI extends Activity {
     private void setButtonsEnabled(boolean enabled) {
 	m_playPauseButton.setEnabled(enabled);
 	m_nextButton.setEnabled(enabled);
-	m_repeatButton.setEnabled(enabled);
+	m_backButton.setEnabled(enabled);
 	m_shuffleButton.setEnabled(enabled);
 	m_bandLockButton.setEnabled(enabled);
 	m_albumLockButton.setEnabled(enabled);
@@ -139,8 +139,8 @@ public class MainUI extends Activity {
 	m_nextButton = (ImageButton)findViewById(R.id.skipButton);
 	m_nextButton.setOnClickListener(m_nextListener);
 
-	m_repeatButton = (ImageButton)findViewById(R.id.prevButton);
-	m_repeatButton.setOnClickListener(m_repeatListener);
+	m_backButton = (ImageButton)findViewById(R.id.prevButton);
+	m_backButton.setOnClickListener(m_backListener);
 
 	m_bandButton = (Button)findViewById(R.id.bandNameButton);
 	m_albumButton = (Button)findViewById(R.id.albumNameButton);
@@ -271,11 +271,11 @@ public class MainUI extends Activity {
 		}
 	    }
 	};
-    private OnClickListener m_repeatListener = new OnClickListener() {
+    private OnClickListener m_backListener = new OnClickListener() {
 	    public void onClick(View v) {
 		if (m_engine != null) {
 		    try {
-			m_engine.repeatCurrentTrack();
+			m_engine.goBack();
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }

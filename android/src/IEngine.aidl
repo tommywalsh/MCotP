@@ -20,5 +20,5 @@ interface IEngine {
 
     void togglePlayPause();
     void skipToNextTrack();
-    void repeatCurrentTrack();
+    void goBack();
 }

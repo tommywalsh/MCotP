@@ -21,4 +21,5 @@ public interface Player
     public void pause();
     public void restartSong();
     public void setSong(Song song);
+    public int getPositionInMillis();
 }

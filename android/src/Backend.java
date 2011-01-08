@@ -220,8 +220,8 @@ public class Backend extends Service {
 	    public void togglePlayPause() {
 		mHandler.sendEmptyMessage(TOGGLE_PLAY_PAUSE_MSG);
 	    }
-	    public void repeatCurrentTrack() {
-		mHandler.sendEmptyMessage(REPEAT_TRACK_MSG);
+	    public void goBack() {
+		mHandler.sendEmptyMessage(BACK_MSG);
 	    }
 	    public void skipToNextTrack() {
 		mHandler.sendEmptyMessage(NEXT_TRACK_MSG);
@@ -264,7 +264,7 @@ public class Backend extends Service {
     };
 
     private static final int NEXT_TRACK_MSG = 1;
-    private static final int REPEAT_TRACK_MSG = 2;
+    private static final int BACK_MSG = 2;
     private static final int TOGGLE_PLAY_PAUSE_MSG = 3;
 
     private static final int TOGGLE_BAND_LOCKING_MSG = 10;
@@ -283,8 +283,8 @@ public class Backend extends Service {
 		    m_engine.nextSong();
 		    notifyChange(true, false);
 		    break;
-		case REPEAT_TRACK_MSG:
-		    m_engine.restartSong();
+		case BACK_MSG:
+		    m_engine.autoBack();
 		    break;
 		case TOGGLE_PLAY_PAUSE_MSG:
 		    m_engine.togglePlayPause();

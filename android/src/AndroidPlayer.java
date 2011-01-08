@@ -72,7 +72,7 @@ public class AndroidPlayer implements Player
     }
 
     public void restartSong() {
-	m_wrappedPlayer.start();
+	m_wrappedPlayer.seekTo(0);
     }
 
     public void setSong(Song song) {
@@ -82,6 +82,10 @@ public class AndroidPlayer implements Player
 	    m_wrappedPlayer.prepare();
 	} catch (java.io.IOException e) {
 	}
+    }
+
+    public int getPositionInMillis() {
+	return m_wrappedPlayer.getCurrentPosition();
     }
 
 }

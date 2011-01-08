@@ -86,15 +86,41 @@ public class Engine
 	}
     }
 
+    public void previousSong() {
+	m_provider.previousSong();
+	Song song = m_provider.getCurrentSong();
+	if (m_isPlaying) {
+	    m_player.pause();
+	}
+	m_player.setSong(song);
+	if (m_isPlaying) {
+	    m_player.play();
+	}
+	m_currentSong = song;
+	notifySongChanged(song);
+    }
 
     public void restartSong() {
-	m_player.restartSong();
+	if (m_isPlaying) {
+	    m_player.restartSong();
+	}
+    }
+
+    private static final long s_backThreshold = 2000;  // 2 seconds
+    public void autoBack() {
+	if (m_player.getPositionInMillis() < s_backThreshold) {
+	    previousSong();
+	} else {
+	    restartSong();
+	}
     }
    
     public void nextSong() {
 	m_provider.advanceSong();
 	Song song = m_provider.getCurrentSong();
-	m_player.pause();
+	if (m_isPlaying) {
+	    m_player.pause();
+	}
 	m_player.setSong(song);
 	if (m_isPlaying) {
 	    m_player.play();
