@@ -18,6 +18,8 @@ public class AndroidSongProvider implements SongProvider
     private Random m_random = new Random();
     private boolean m_isRandom = false;
     private Song m_song;
+    private int m_bandId;
+    private int m_albumId;
 
     private enum Clamp { NONE, BAND, ALBUM}
 
@@ -43,11 +45,11 @@ public class AndroidSongProvider implements SongProvider
 	if (m_cursor != null) {
 	    if (m_clamp == Clamp.BAND) {
 		whereClause = MediaStore.Audio.AudioColumns.ARTIST_ID + "=?";
-		String[] tmp = {new Integer(m_cursor.getInt(3)).toString()};
+		String[] tmp = {new Integer(m_bandId).toString()};
 		whereArgs = tmp;
 	    } else if (m_clamp == Clamp.ALBUM) {
 		whereClause = MediaStore.Audio.AudioColumns.ALBUM_ID + "=?";
-		String[] tmp = {new Integer(m_cursor.getInt(1)).toString()};
+		String[] tmp = {new Integer(m_albumId).toString()};
 		whereArgs = tmp;
 	    }
 	}
@@ -72,6 +74,8 @@ public class AndroidSongProvider implements SongProvider
 				 m_cursor.getString(2),
 				 m_cursor.getString(0),
 				 m_cursor.getString(6));
+	m_bandId = m_cursor.getInt(3);
+	m_albumId = m_cursor.getInt(1);
     }
     private void advanceSequential() {
 	m_cursor.moveToNext();
