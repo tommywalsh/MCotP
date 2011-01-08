@@ -60,6 +60,9 @@
      android:layout_below="@id/albumNameButton"
      android:layout_toRightOf="@id/shuffleButton"
      android:layout_alignLeft="@id/albumNameButton"
+     android:layout_alignRight="@id/albumNameButton"
+     android:gravity="center"
+     android:textSize="20sp"
      android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx"
      />
 
