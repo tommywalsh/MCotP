@@ -16,4 +16,5 @@ interface IProvider {
     void toggleAlbumLocking();
     void toggleShuffling();
 
+    void setMode(boolean shuffle, boolean bandLock, boolean albumLock);
 }
