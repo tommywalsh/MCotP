@@ -18,26 +18,17 @@
      android:layout_height="wrap_content" 
      android:layout_alignParentLeft="true" 
      android:layout_below="@id/bandLockButton" 
-     />
-
-
-  <Button
-     android:id="@+id/shuffleButton"
-     android:layout_width="wrap_content" 
-     android:layout_height="wrap_content" 
-     android:layout_alignParentTop="true" 
-     android:layout_alignParentRight="true" 
-     android:layout_alignBottom="@id/albumLockButton"
-     android:text="Shuffle"
+     android:layout_alignRight="@id/bandLockButton"
      />
 
   <Button
      android:id="@+id/bandNameButton"
      android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
-     android:layout_toLeftOf="@id/shuffleButton"
+     android:layout_alignParentRight="true"
      android:layout_toRightOf="@id/bandLockButton"
      android:layout_alignTop="@id/bandLockButton"
+     android:layout_alignBottom="@id/bandLockButton"
      android:text="Band Name"
      />
 
@@ -45,20 +36,20 @@
      android:id="@+id/albumNameButton"
      android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
-     android:layout_toLeftOf="@id/shuffleButton"
+     android:layout_alignParentRight="true"
      android:layout_toRightOf="@id/albumLockButton"
      android:layout_alignTop="@id/albumLockButton"
+     android:layout_alignBottom="@id/albumLockButton"
      android:layout_below="@id/bandNameButton"
      android:text="Album Name (Year)"
      />
 
-  <TextView
-     android:id="@+id/trackNumText"
+  <ImageButton
+     android:id="@+id/shuffleButton"
      android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
+     android:layout_alignParentLeft="true" 
      android:layout_below="@id/albumLockButton"
-     android:layout_alignParentLeft="true"
-     android:text="#"
      />
 
 
@@ -67,7 +58,7 @@
      android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
      android:layout_below="@id/albumNameButton"
-     android:layout_toRightOf="@id/trackNumText"
+     android:layout_toRightOf="@id/shuffleButton"
      android:layout_alignLeft="@id/albumNameButton"
      android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx"
      />

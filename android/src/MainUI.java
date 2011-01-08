@@ -44,7 +44,7 @@ public class MainUI extends Activity {
     ImageButton m_playPauseButton;
     ImageButton m_nextButton;
     ImageButton m_repeatButton;
-    Button m_shuffleButton;
+    ImageButton m_shuffleButton;
     ImageButton m_bandLockButton;
     ImageButton m_albumLockButton;
     TextView m_trackText;    
@@ -147,7 +147,7 @@ public class MainUI extends Activity {
 
 	m_trackText = (TextView)findViewById(R.id.songText);
 
-	m_shuffleButton = (Button)findViewById(R.id.shuffleButton);
+	m_shuffleButton = (ImageButton)findViewById(R.id.shuffleButton);
 	m_shuffleButton.setOnClickListener(m_shuffleListener);
 
 	m_bandLockButton = (ImageButton)findViewById(R.id.bandLockButton);
@@ -385,9 +385,9 @@ public class MainUI extends Activity {
     private void onProviderUpdate (ProviderInfo pi)
     {
 	// We've been called before, so from now on, just update the UI
-	m_shuffleButton.setText(pi.shuffling ?
-				R.string.sequential :
-				R.string.random);
+	m_shuffleButton.setImageResource(pi.shuffling ?
+					 R.drawable.random :
+					 R.drawable.sequential);
 	m_bandLockButton.setImageResource(pi.bandLocked ? 
 					  R.drawable.locked :
 					  R.drawable.unlocked);
