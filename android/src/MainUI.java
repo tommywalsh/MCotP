@@ -29,6 +29,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import android.util.Log;
@@ -40,24 +41,89 @@ public class MainUI extends Activity {
     IProvider m_provider = null;
 
     // On-screen widgets
-    Button m_toggleButton;
-    Button m_nextButton;
-    Button m_repeatButton;
-    Button m_shuffleButton;
-    Button m_bandLockButton;
-    Button m_albumLockButton;
-    TextView m_bandText;
-    TextView m_albumText;
-    TextView m_trackText;
+    ImageButton m_playPauseButton;
+    ImageButton m_nextButton;
+    ImageButton m_backButton;
+    ImageButton m_shuffleButton;
+    ImageButton m_bandLockButton;
+    ImageButton m_albumLockButton;
+    TextView m_trackText;    
+    Button m_albumButton;
+    Button m_bandButton;
+
+
+    // This should be reworked.  Helper classes here are ugly.
+    class EngineInfo {
+	public boolean isPlaying;
+	public String album;
+	public String band;
+	public String track;
+    }
+
+    class ProviderInfo {
+	public boolean shuffling;
+	public boolean bandLocked;
+	public boolean albumLocked;
+    }
+
+
+    // For simplicity's sake, we'll just have a few discrete modes
+    // at least for now
+    enum Mode {
+        ALL_RANDOM,
+        BAND_RANDOM,
+        BAND_SEQUENTIAL,
+        ALBUM_SEQUENTIAL
+    }
+    Mode m_currentMode;
+
+
+    private void setModeBooleans(boolean shuffle, boolean bandLock, boolean albumLock) {
+	try {
+	    m_provider.setMode(shuffle, bandLock, albumLock);
+	} catch (android.os.RemoteException e) {
+	    // Nothing special required on fail.
+	    // UI will update appropriately based on 
+	    // return message from service anyhow.
+	}
+    }
+
+    private void enterAllRandomMode() {
+	setModeBooleans(true, false, false);
+        m_shuffleButton.setVisibility(android.view.View.INVISIBLE);
+        m_currentMode = Mode.ALL_RANDOM;
+    }
+
+    private void enterBandRandomMode() {
+	setModeBooleans(true, true, false);
+        m_shuffleButton.setVisibility(android.view.View.VISIBLE);
+        m_currentMode = Mode.BAND_RANDOM;
+    }
+
+    private void enterBandSequentialMode() {
+	setModeBooleans(false, true, false);
+        m_shuffleButton.setVisibility(android.view.View.VISIBLE);
+        m_currentMode = Mode.BAND_SEQUENTIAL;
+    }
+
+    private void enterAlbumSequentialMode() {
+	setModeBooleans(false, true, true);
+        m_shuffleButton.setVisibility(android.view.View.INVISIBLE);
+        m_currentMode = Mode.ALBUM_SEQUENTIAL;
+    }
+
+    
 
 
     private void setButtonsEnabled(boolean enabled) {
-	m_toggleButton.setEnabled(enabled);
+	m_playPauseButton.setEnabled(enabled);
 	m_nextButton.setEnabled(enabled);
-	m_repeatButton.setEnabled(enabled);
+	m_backButton.setEnabled(enabled);
 	m_shuffleButton.setEnabled(enabled);
 	m_bandLockButton.setEnabled(enabled);
 	m_albumLockButton.setEnabled(enabled);
+	m_bandButton.setEnabled(enabled);
+	m_albumButton.setEnabled(enabled);
     }
 
     @Override
@@ -67,26 +133,27 @@ public class MainUI extends Activity {
         setContentView(R.layout.main);
 	
 	// Find and store the buttons, and set up their callbacks
-	m_toggleButton = (Button)findViewById(R.id.playPauseButton);
-	m_toggleButton.setOnClickListener(m_toggleListener);
+	m_playPauseButton = (ImageButton)findViewById(R.id.playPauseButton);
+	m_playPauseButton.setOnClickListener(m_toggleListener);
 
-	m_nextButton = (Button)findViewById(R.id.skipButton);
+	m_nextButton = (ImageButton)findViewById(R.id.skipButton);
 	m_nextButton.setOnClickListener(m_nextListener);
 
-	m_repeatButton = (Button)findViewById(R.id.restartButton);
-	m_repeatButton.setOnClickListener(m_repeatListener);
+	m_backButton = (ImageButton)findViewById(R.id.prevButton);
+	m_backButton.setOnClickListener(m_backListener);
 
-	m_bandText = (TextView)findViewById(R.id.bandText);
-	m_albumText = (TextView)findViewById(R.id.albumText);
+	m_bandButton = (Button)findViewById(R.id.bandNameButton);
+	m_albumButton = (Button)findViewById(R.id.albumNameButton);
+
 	m_trackText = (TextView)findViewById(R.id.songText);
 
-	m_shuffleButton = (Button)findViewById(R.id.shuffleButton);
+	m_shuffleButton = (ImageButton)findViewById(R.id.shuffleButton);
 	m_shuffleButton.setOnClickListener(m_shuffleListener);
 
-	m_bandLockButton = (Button)findViewById(R.id.bandLockButton);
+	m_bandLockButton = (ImageButton)findViewById(R.id.bandLockButton);
 	m_bandLockButton.setOnClickListener(m_bandLockListener);
 
-	m_albumLockButton = (Button)findViewById(R.id.albumLockButton);
+	m_albumLockButton = (ImageButton)findViewById(R.id.albumLockButton);
 	m_albumLockButton.setOnClickListener(m_albumLockListener);
 
 	setButtonsEnabled(false);
@@ -96,6 +163,15 @@ public class MainUI extends Activity {
 	bindService(new Intent(IProvider.class.getName()),
                     m_providerConnection, Context.BIND_AUTO_CREATE);
 
+    }
+
+    private void initPlayer() {
+	enterAllRandomMode();
+	try {
+	    setButtonsEnabled(true);
+	    m_engine.skipToNextTrack();	
+	} catch (RemoteException e) {
+	}
     }
 
 
@@ -123,8 +199,8 @@ public class MainUI extends Activity {
             m_engine = IEngine.Stub.asInterface(service);
 
 	    if (m_provider != null) {
-		// enable buttons only after all interfaces connected!
-		setButtonsEnabled(true);
+		// enable UI only after all interfaces connected!
+		initPlayer();
 	    }
 
             // We want to monitor the service for as long as we are
@@ -153,7 +229,8 @@ public class MainUI extends Activity {
                 IBinder service) {
             m_provider = IProvider.Stub.asInterface(service);
 	    if (m_engine != null) {
-		setButtonsEnabled(true);
+		// enable UI only after all interfaces connected!
+		initPlayer();
 	    }
         }
 
@@ -194,11 +271,11 @@ public class MainUI extends Activity {
 		}
 	    }
 	};
-    private OnClickListener m_repeatListener = new OnClickListener() {
+    private OnClickListener m_backListener = new OnClickListener() {
 	    public void onClick(View v) {
 		if (m_engine != null) {
 		    try {
-			m_engine.repeatCurrentTrack();
+			m_engine.goBack();
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
@@ -209,18 +286,33 @@ public class MainUI extends Activity {
 	    public void onClick(View v) {
 		if (m_provider != null) {
 		    try {
-			m_provider.toggleShuffling();
+			if (m_currentMode == Mode.BAND_RANDOM) {
+			    enterBandSequentialMode();
+			} else if (m_currentMode ==  Mode.BAND_SEQUENTIAL) {
+			    enterBandRandomMode();
+			} else {
+			    m_provider.toggleShuffling();
+			}
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
 		}
 	    }
 	};
+
     private OnClickListener m_bandLockListener = new OnClickListener() {
 	    public void onClick(View v) {
 		if (m_provider != null) {
 		    try {
-			m_provider.toggleBandLocking();
+			if (m_currentMode == Mode.ALL_RANDOM) {
+			    enterBandRandomMode();
+			} else if (m_currentMode == Mode.BAND_RANDOM || m_currentMode == Mode.BAND_SEQUENTIAL) {
+			    enterAllRandomMode();
+			} else if (m_currentMode == Mode.ALBUM_SEQUENTIAL) {
+			    enterBandRandomMode();
+			} else {
+			    m_provider.toggleBandLocking();
+			}
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
@@ -231,7 +323,18 @@ public class MainUI extends Activity {
 	    public void onClick(View v) {
 		if (m_provider != null) {
 		    try {
-			m_provider.toggleAlbumLocking();
+			switch (m_currentMode) {
+			case ALBUM_SEQUENTIAL:
+			    enterAllRandomMode();
+			    break;
+			case BAND_SEQUENTIAL:
+			case BAND_RANDOM:
+			case ALL_RANDOM:
+			    enterAlbumSequentialMode();
+			    break;
+			default:
+			    m_provider.toggleAlbumLocking();
+			}
 		    } catch (RemoteException ex) {
 			// server process died.. will clean up if necessary in disconnect code
 		    }
@@ -248,20 +351,6 @@ public class MainUI extends Activity {
 
 
 
-    // This should be reworked.  Helper classes here are ugly.
-    class EngineInfo {
-	public boolean isPlaying;
-	public String album;
-	public String band;
-	public String track;
-    }
-
-    class ProviderInfo {
-	public boolean shuffling;
-	public boolean bandLocked;
-	public boolean albumLocked;
-    }
-	    
 
     // Updates from the backend
     private IStatusCallback mCallback = new IStatusCallback.Stub() {
@@ -283,7 +372,7 @@ public class MainUI extends Activity {
 		pi.shuffling = shuffle;
 		pi.bandLocked = bandLock;
 		pi.albumLocked = albumLock;
-
+		
 		mHandler.sendMessage(mHandler.obtainMessage(PROVIDER_UPDATE, pi));
 	    }
 
@@ -293,30 +382,37 @@ public class MainUI extends Activity {
     private static final int ENGINE_UPDATE = 2;
 
 
+    private void onProviderUpdate (ProviderInfo pi)
+    {
+	// We've been called before, so from now on, just update the UI
+	m_shuffleButton.setImageResource(pi.shuffling ?
+					 R.drawable.random :
+					 R.drawable.sequential);
+	m_bandLockButton.setImageResource(pi.bandLocked ? 
+					  R.drawable.locked :
+					  R.drawable.unlocked);
+	m_albumLockButton.setImageResource(pi.albumLocked ?
+					   R.drawable.locked :
+					   R.drawable.unlocked);
+    }
+
     // Here's the handler that updates the UI
     private Handler mHandler = new Handler() {
         @Override public void handleMessage(Message msg) {
             switch (msg.what) {
 	    case ENGINE_UPDATE:
 		EngineInfo ei = (EngineInfo)(msg.obj);
-		m_toggleButton.setText( ei.isPlaying ?
-					R.string.pause :
-					R.string.play );
-		m_bandText.setText(ei.band);
-		m_albumText.setText(ei.album);
+		m_playPauseButton.setImageResource( ei.isPlaying ?
+                                                    R.drawable.pause :
+                                                    R.drawable.play );
+		m_bandButton.setText(ei.band);
+		m_albumButton.setText(ei.album);
 		m_trackText.setText(ei.track);
 		break;
-	    case PROVIDER_UPDATE:
+	    case PROVIDER_UPDATE: 
 		ProviderInfo pi = (ProviderInfo)(msg.obj);
-		m_shuffleButton.setText(pi.shuffling ?
-					R.string.sequential :
-					R.string.random);
-		m_bandLockButton.setText(pi.bandLocked ?
-					R.string.unlock :
-					R.string.lock);
-		m_albumLockButton.setText(pi.albumLocked ?
-					R.string.unlock :
-					R.string.lock);
+		onProviderUpdate(pi);
+		break;
 	    default:
 		super.handleMessage(msg);
             }

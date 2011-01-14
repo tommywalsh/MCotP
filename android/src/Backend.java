@@ -232,14 +232,22 @@ public class Backend extends Service {
 	    public void togglePlayPause() {
 		mHandler.sendEmptyMessage(TOGGLE_PLAY_PAUSE_MSG);
 	    }
-	    public void repeatCurrentTrack() {
-		mHandler.sendEmptyMessage(REPEAT_TRACK_MSG);
+	    public void goBack() {
+		mHandler.sendEmptyMessage(BACK_MSG);
 	    }
 	    public void skipToNextTrack() {
 		mHandler.sendEmptyMessage(NEXT_TRACK_MSG);
 	    }
 
 	};
+
+
+    class ModeItems {
+	public boolean shuffle;
+	public boolean bandLock;
+	public boolean albumLock;
+    }
+
 
     private final IProvider.Stub mSecondaryBinder = new IProvider.Stub() {
 
@@ -254,16 +262,27 @@ public class Backend extends Service {
 	    public void toggleShuffling() {
 		mHandler.sendEmptyMessage(TOGGLE_SHUFFLING_MSG);
 	    }
+	    
+	    public void setMode(boolean shuffle, boolean bandLock, boolean albumLock) {
+		ModeItems mi = new ModeItems();
+		mi.shuffle = shuffle;
+		mi.bandLock = bandLock;
+		mi.albumLock = albumLock;
+		Message msg = Message.obtain(mHandler, SET_MODE_MSG, mi);
+		mHandler.sendMessage(msg);
+	    }
+
 
     };
 
     private static final int NEXT_TRACK_MSG = 1;
-    private static final int REPEAT_TRACK_MSG = 2;
+    private static final int BACK_MSG = 2;
     private static final int TOGGLE_PLAY_PAUSE_MSG = 3;
 
     private static final int TOGGLE_BAND_LOCKING_MSG = 10;
     private static final int TOGGLE_ALBUM_LOCKING_MSG = 11;
     private static final int TOGGLE_SHUFFLING_MSG = 12;
+    private static final int SET_MODE_MSG = 13;
 
 
     // This code runs on our thread, and will relay UI-initiated commands to 
@@ -276,8 +295,8 @@ public class Backend extends Service {
 		    m_engine.nextSong();
 		    notifyChange(true, false);
 		    break;
-		case REPEAT_TRACK_MSG:
-		    m_engine.restartSong();
+		case BACK_MSG:
+		    m_engine.autoBack();
 		    break;
 		case TOGGLE_PLAY_PAUSE_MSG:
 		    m_engine.togglePlayPause();
@@ -295,6 +314,20 @@ public class Backend extends Service {
 		    m_songProvider.toggleRandom();
 		    notifyChange(false, true);
 		    break;
+		case SET_MODE_MSG: {
+		    ModeItems mi = (ModeItems)msg.obj;
+		    if (m_songProvider.isRandom() != mi.shuffle) {
+			m_songProvider.toggleRandom();
+		    }
+		    if (m_songProvider.isBandClamped() != mi.bandLock) {
+			m_songProvider.toggleBandClamp();
+		    }
+		    if (m_songProvider.isAlbumClamped() != mi.albumLock) {
+			m_songProvider.toggleAlbumClamp();
+		    }
+		    notifyChange(false, true);			
+		    break;
+		}
                 default:
                     super.handleMessage(msg);
             }

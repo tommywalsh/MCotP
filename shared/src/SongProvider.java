@@ -6,6 +6,7 @@ public interface SongProvider
     // and allow the engine to easily cycle over all applicable songs
     public Song getCurrentSong();
     public void advanceSong();
+    public void previousSong();
     public void toggleRandom();
     public boolean isRandom();
     public void toggleBandClamp();
