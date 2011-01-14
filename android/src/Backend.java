@@ -71,6 +71,7 @@ public class Backend extends Service {
     {
         public void onReceive(Context context, Intent intent) {
             if (m_engine.isPlaying()) {
+                Log.d("MCOTP", "plug pulled");
                 m_engine.togglePlayPause();                
             }
         }
@@ -80,6 +81,7 @@ public class Backend extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
 	setForeground(true);
+        Log.d("MCOTP", "register plug pulled");
         registerReceiver(new PlugPulledReceiver(), new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
     }
 
@@ -127,9 +129,18 @@ public class Backend extends Service {
 	}	
 	}*/
 
+
+    PlugPulledReceiver m_plugPulledReceiver = new PlugPulledReceiver();
+
     @Override
     public void onCreate() {
 	initializeGenericComponents();
+
+	setForeground(true);
+
+        Log.d("MCOTP", "register plug pulled");
+        registerReceiver(m_plugPulledReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
+
     }
 
     @Override
@@ -139,6 +150,7 @@ public class Backend extends Service {
 	//	saveProvider(m_songProvider);
 
         mCallbacks.kill();
+        unregisterReceiver(m_plugPulledReceiver);
     }
 
     ///////////////////// END SETUP CODE ////////////////////////////////
